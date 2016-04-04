@@ -12,6 +12,7 @@ int send(void* data, int size, int who);
 // pointer - where the information would be saved
 // size - block size / size to save
 // who - where the information is
+// returns the amount of bytes saved or -1 if failed
 int recieve(void* pointer, int size, int who);
 
 // who - which connection should be closed
