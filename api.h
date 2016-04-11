@@ -1,5 +1,5 @@
 
-// who - where the connection should be oppened asdasd
+// who - where the connection should be opened
 // returns a positive int with the 'connection id'
 // returns -1 if not listening
 int open(void* who);
