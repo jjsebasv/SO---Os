@@ -1,7 +1,7 @@
 // who - where the connection should be opened
 // returns a positive int with the 'connection id'
 // returns -1 if not listening
-int open(void* who);
+int open(void* who, int type);
 
 // data - a pointer to the information to be sent
 // size - how long the information to be read is
