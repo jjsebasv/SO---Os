@@ -5,7 +5,6 @@
 #include <unistd.h>
 
 
-
 static const int client_server_fd;
 
 int main (void){
