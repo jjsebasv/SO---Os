@@ -19,8 +19,8 @@ int main (void){
 
 		return -1;
 	}
+	
 	//sets up the fds to monitor
-
 	FD_ZERO(&set);
 	FD_SET(client_server_fd, &set);
 
@@ -32,7 +32,8 @@ int main (void){
 
 	while(1){
 
-		if(select(1, set, NULL, NULL, tv) > 0){ //if something was written
+		//if something was written
+		if(select(1, set, NULL, NULL, tv) > 0){ 
 
 			r = getRequest(client_server_fd);
 
