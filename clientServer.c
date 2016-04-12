@@ -35,13 +35,12 @@ int main (void){
 		if(select(1, set, NULL, NULL, tv) > 0){ //if something was written
 
 			r = getRequest(client_server_fd);
-			
+
 			if(r != NULL){
 
 				processRequest(r);
 			}	
 		}      
-
 	}
 }
 
