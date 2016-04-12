@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
-#define CLIENT_SERVER "tmp/client"
+
 
 
 static const int client_server_fd;
@@ -19,7 +19,7 @@ int main (void){
 
 		return -1;
 	}
-	
+
 	//sets up the fds to monitor
 	FD_ZERO(&set);
 	FD_SET(client_server_fd, &set);
@@ -41,8 +41,12 @@ int main (void){
 
 				processRequest(r);
 			}	
+		}else{
+
+			printf("No requests to process\n");
 		}      
 	}
+	return 0;
 }
 
 
