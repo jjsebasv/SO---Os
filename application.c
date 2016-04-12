@@ -16,7 +16,6 @@
 #define SERVER_SERVER "tmp/server"
 #define CLIENT_SERVER "tmp/client"
 
-static const int client_server_fd;
 static const int server_server_fd;
 
 int open(void * something, int wut) {
@@ -45,7 +44,7 @@ void otherFunction() {
 // returns file descriptor
 // TODO what is a request? -  define
 // type - read / write
-int myRequest( Request * request ) {
+int myRequest(request * request ) {
   if ( request -> pipe ) {
 
   }
@@ -60,7 +59,7 @@ int myWrite( void * data  ) {
 
 // Private
 
-int openNamedPipe(char * something, int type) {
+int openNamedPipe(char * something) {
   char[130] origin = '/tmp/';
 
   int fd;
@@ -76,7 +75,7 @@ void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
 }
 
-void readNamedPipe() {
+void readNamedPipe(int fd) {
 
 }
 
