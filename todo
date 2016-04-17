@@ -4,7 +4,7 @@ TODO
 > enums tipos de ipc
 > que garcha es un socket
 > sqlite?
-> funcion getRequest en clientServer.c
-> funcion processRequest en clientServer.c
+> funcion getRequest en clientServer.c - CHECK THIS
+> funcion processRequest en clientServer.c - CHECK THIS
 
 > Vamo a calmarno
