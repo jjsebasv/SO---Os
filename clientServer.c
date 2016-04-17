@@ -70,3 +70,5 @@ void processRequest(struct Request r) {
 // TODO
 // #define NOT_FOUND_ERR
 // int processRequest(struct Request r) {};
+// readRequest(r)
+// writeRequest(r)
