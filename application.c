@@ -16,6 +16,8 @@
 #define SERVER_SERVER "tmp/server"
 #define CLIENT_SERVER "tmp/client"
 
+#define BLOCK 1024
+
 static const int server_server_fd;
 
 int open(void * something, int wut) {
@@ -75,8 +77,35 @@ void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
 }
 
-void readNamedPipe(int fd) {
+// void readNamedPipe(int fd) {
+//   int r = 0;
+//   int size = 1;
+//   char readBuffer;
+//   char * readPtr = readBuffer;
+  
+//   while (r = read(fd, readPtr, size) > 0) {
+//     printf('%s', readBuffer);
+//   }
+  
+//   printf('\n');
+// }
 
+void readNamedPipe (int fd) {
+  char writeBuffer[BLOCK];
+  
+  while ( q > 0 ) {
+    q = read(fd, writeBuffer, BLOCK);
+    printf('%s', writeBuffer);
+  }
+}
+
+void writeRequest (int fd, Request * request) {
+  writeNamedPipe(fd, request -> action, sizeof(request -> action));
+  writeNamedPipe(fd, request -> type, sizeof(request -> type));
+  writeNamedPipe(fd, request -> dataSize, sizeof(request -> dataSize));
+  writeNamedPipe(fd, request -> data, request -> dataSize);
+  writeNamedPipe(fd, request -> directionSize, sizeof(request -> directionSize));
+  writeNamedPipe(fd, request -> direction, request -> directionSize);
 }
 
 int closeNamedPipe(int fd, char * something) {
