@@ -1,11 +1,24 @@
 #include "ipc.h"
 #include "request.h"
 
-void myRequest() {
+void myRequest(int action, int type, size_t dataSize, void* data, int mode) {
   int fd[2];
-  int myPipe = pipe(fd);
-  createRequest();
-  sendRequest();
+  struct Request r;
+  r = createRequest(action, type, dataSize, data);
+
+  switch (mode){
+    case 0: 
+      if(pipe(fd) != 0){
+      printf("Cannot create server reponse receiver\n");
+      return ERROR;
+    }
+    r.direction = fd[1];
+    r.directionSize = sizeof(int);
+    break;
+    case 1:
+    //TODO
+  }
+  sendRequest(r, mode);
 }
 
 void writeRequest (int fd, Request * request) {
