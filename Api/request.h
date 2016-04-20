@@ -26,3 +26,8 @@ struct Request {
   int type;
 }
 */
+
+//the client should use this function to start a request
+//request is initialized and sent to the server
+//mode - 0 namedPipe connection, 1 socket connection 
+void myRequest(int action, int type, size_t dataSize, void* data, int mode);
