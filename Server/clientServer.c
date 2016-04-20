@@ -41,34 +41,4 @@ int main (void){
 	return 0;
 }
 
-struct Request getRequest(int fd) {
-	int aux_err;
-	struct Request * rta;
 
-	aux_err = read( fd, rta, sizeof(struct Request) );
-	if ( aux_err )
-		return rta;
-	return NOT_FOUND_ERR; // return NULL
-}
-
-// action = 0 read
-// action = 1 write
-void processRequest(struct Request r) {
-	switch (r -> action) {
-		case 0:
-			return readRequest(r);
-			break;
-		case 1:
-			return writeRequest(r);
-			break;
-	}
-	return;
-}
-
-
-
-// TODO
-// #define NOT_FOUND_ERR
-// int processRequest(struct Request r) {};
-// readRequest(r)
-// writeRequest(r)
