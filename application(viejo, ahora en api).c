@@ -35,29 +35,13 @@ int open(void * something, int wut) {
   return -1;
 }
 
-void otherFunction() {
+void myRequest() {
   int fd[2];
   int myPipe = pipe(fd);
   createRequest();
-  myRequest();
+  sendRequest();
 }
 
-
-// returns file descriptor
-// TODO what is a request? -  define
-// type - read / write
-int myRequest(request * request ) {
-  if ( request -> pipe ) {
-
-  }
-  return -1;
-}
-
-int myWrite( void * data  ) {
-
-
-  return 0;
-}
 
 // Private
 
