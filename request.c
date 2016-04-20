@@ -4,8 +4,11 @@
 
 struct Request {
   int action;
-  void* direction;
   int type;
+  size_t dataSize;
+  void* data;
+  size_t directionSize;
+  void* direction;
 }
 
 // To consider: Should the request have data to write?
