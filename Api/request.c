@@ -8,7 +8,6 @@ void myRequest() {
   sendRequest();
 }
 
-
 void writeRequest (int fd, Request * request) {
   writeNamedPipe(fd, request -> action, sizeof(request -> action));
   writeNamedPipe(fd, request -> type, sizeof(request -> type));
@@ -17,9 +16,6 @@ void writeRequest (int fd, Request * request) {
   writeNamedPipe(fd, request -> directionSize, sizeof(request -> directionSize));
   writeNamedPipe(fd, request -> direction, request -> directionSize);
 }
-
-
-
 
 struct Request getRequest(int fd) {
   int aux_err;
@@ -44,8 +40,6 @@ void processRequest(struct Request r) {
   }
   return;
 }
-
-
 
 // TODO
 // #define NOT_FOUND_ERR

@@ -5,8 +5,8 @@
 #define IP 2
 
 
-int open(void * something, int wut) {
-  switch (wut) {
+int open(void * something, int type) {
+  switch (type) {
     case PIPE :
       return openPipe(something);
       break;
@@ -20,7 +20,6 @@ int open(void * something, int wut) {
   return -1;
 }
 
-
 int openNamedPipe(char * something) {
   char[130] origin = '/tmp/';
 
@@ -32,7 +31,6 @@ int openNamedPipe(char * something) {
 
   return fd;
 }
-
 
 void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
