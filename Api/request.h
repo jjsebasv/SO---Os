@@ -9,7 +9,8 @@ struct Request {
   void* data;
   size_t directionSize;
   void* direction;
-} request     /*TODO no anda si no pongo esto aca (ver despues la sintaxis)*/
+};
+
 // To consider: Should the request have data to write?
 // If the request demands to write in a file for the user to read, then
 // there should be something in the data.
