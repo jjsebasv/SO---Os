@@ -23,6 +23,7 @@ void myRequest(int action, int type, size_t dataSize, void* data, int mode) {
     break;
     case 1:
     //TODO socket implementation
+    break;
   }
   printf("Mode not valid\n");
   return ERROR;
