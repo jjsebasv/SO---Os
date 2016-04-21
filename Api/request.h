@@ -1,3 +1,6 @@
+typedef enum connections {PIPE = 0, SOCKET, NAMED_PIPE, IP} connectionType;
+enum requestStates {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
+
 // Type - whether is a file / IP / PIPE / Named Pipe
 // Direction - where to look for the data
 // Action - whethet to read or write
@@ -31,3 +34,16 @@ struct Request {
 //request is initialized and sent to the server
 //mode - 0 namedPipe connection, 1 socket connection 
 void myRequest(int action, int type, size_t dataSize, void* data, int mode);
+
+// Write a request in the request queue
+void writeRequest (int fd, Request * request);
+
+// Get the first request in the request queue
+struct Request getRequest(int fd);
+
+// Process a request
+void processRequest(struct Request r);
+
+requestState readRequest(Request r);
+
+requestState writeRequest(Request r);

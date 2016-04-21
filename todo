@@ -1,7 +1,5 @@
 TODO
 
-> defines de errores
-> enums tipos de ipc
 > que garcha es un socket
 > sqlite?
 > funcion getRequest en clientServer.c - CHECK THIS
