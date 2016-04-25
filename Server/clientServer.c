@@ -15,8 +15,7 @@ int main (void){
 
 	//initialize request queue
 	if( !client_server_fd = openNamedPipe("RequestQueue") ) {
-
-		return -1;
+		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
 	//sets up the fds to monitor

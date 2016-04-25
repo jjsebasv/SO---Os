@@ -1,11 +1,8 @@
 #include "api.h"
 
-#define PIPE 0
-#define NAMED_PIPE 1
-#define IP 2
+#define BLOCK 1024
 
-
-int open(void * something, int type) {
+int open(void * something, connectionType type) {
   switch (type) {
     case PIPE :
       return openPipe(something);
@@ -27,7 +24,10 @@ int openNamedPipe(char * something) {
   char * myfifo = strcat(origin,something);
 
   mkfifo(myfifo, 0666);
-  fd = open(myfifo, type);
+
+  // no estamos validando que open devuelva -1 no? 
+  // llamada recursiva?
+  fd = open(myfifo, NAMED_PIPE);
 
   return fd;
 }
