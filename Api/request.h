@@ -32,11 +32,11 @@ struct Request {
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
-//mode - 0 namedPipe connection, 1 socket connection 
-void myRequest(int action, int type, size_t dataSize, void* data, int mode);
+//returns the fd where the response will be read
+int requestServer(int action, int type, size_t dataSize, void* data);
 
 // Write a request in the request queue
-void writeRequest (int fd, Request * request);
+int writeRequest (Request * request);
 
 // Get the first request in the request queue
 struct Request getRequest(int fd);
@@ -47,3 +47,5 @@ void processRequest(struct Request r);
 requestState readRequest(Request r);
 
 requestState writeRequest(Request r);
+
+

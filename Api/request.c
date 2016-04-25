@@ -5,7 +5,7 @@
 #define NOT_FOUND_ERR   NULL
 enum connectionsErrors {ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE} connectionError;
 
-int myRequest(int action, int type, size_t dataSize, void* data, int mode) {
+int requestServer(int action, int type, size_t dataSize, void* data) {
   int fd[2];
   struct Request r = createRequest(action, type, dataSize, data);
 
@@ -14,29 +14,19 @@ int myRequest(int action, int type, size_t dataSize, void* data, int mode) {
     return FAILED_ON_CREATE_REQUEST;                           //despues los borro
   }
 
-  switch (mode){
-    case NAMED_PIPE:
-      if(pipe(fd) != 0){
-        printf("Cannot create server reponse receiver\n");
-        return ERROR_CREATE_SERVER_RESPONSE_RECIEVER;
-      }
-      r.direction = fd[1];
-      r.directionSize = sizeof(int);
-      writeRequest(fd,r);
-      break;
-    case SOCKET:
-      //TODO socket implementation
-      break;
-    default:
-      printf("Mode not valid\n");
-      return REQUEST_INVALID_TYPE;
+  if(pipe(fd) != 0){
+    printf("Cannot create server reponse receiver\n");
+    return ERROR_CREATE_SERVER_RESPONSE_RECIEVER;
   }
+  r.direction = fd[1];
+  r.directionSize = sizeof(int);
+  writeRequest(r);
 
-  return REQUEST_OK;
+  return fd[0];
 }
 
-//TODO request queue's fd should be a global variable, we need to learn how to get an opened named pipe's fd 
-void writeRequest (int fd, Request * request) {
+int writeRequest (Request * request) {
+
   writeNamedPipe(fd, request -> action, sizeof(request -> action));
   writeNamedPipe(fd, request -> type, sizeof(request -> type));
   writeNamedPipe(fd, request -> dataSize, sizeof(request -> dataSize));
@@ -45,16 +35,18 @@ void writeRequest (int fd, Request * request) {
   writeNamedPipe(fd, request -> direction, request -> directionSize);
 }
 
-struct Request getRequest(int fd) {
+struct Request getRequest() {
   int aux_err;
   struct Request * rta;
-
-  aux_err = read( fd, rta, sizeof(struct Request) );
+  int fd = 0;
+  //TODO open pipe with its name and start reading from it
+  aux_err = read( fd, rta, sizeof(struct Request) );    
   if ( aux_err )
     return rta;
   return NOT_FOUND_ERR; // return NULL
 }
 
+//Change switch to array of void * functions
 void processRequest(struct Request r) {
   switch (r -> action) {
     case READ:
