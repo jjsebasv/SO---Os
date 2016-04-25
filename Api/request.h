@@ -32,8 +32,8 @@ struct Request {
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
-//returns the fd where the response will be read
-int requestServer(int action, int type, size_t dataSize, void* data);
+//returns the fd where the response will be read TODO Response structure
+struct Response requestServer(int action, int type, size_t dataSize, void* data);
 
 // Write a request in the request queue
 int writeRequest (Request * request);
@@ -47,5 +47,4 @@ void processRequest(struct Request r);
 requestState readRequest(Request r);
 
 requestState writeRequest(Request r);
-
 
