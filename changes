@@ -1,6 +1,0 @@
-Changes to the api:
-You will be able to choose the type of connection before the compilation of the code. You wont be able to change it unless you compile it again.
-New "Request" object is needed because the user should not be aware of the type of connection used. 
-New folders for namedPipe and Socket implementation.
-All Request and Response data are now handled as pointers.
-Server's Makefile working
