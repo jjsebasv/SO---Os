@@ -1,15 +1,13 @@
 #include "ipc.h"
 #include "request.h"
 
-// donde van todos los enums y tydefs?
 #define NOT_FOUND_ERR   NULL
 enum connectionsErrors {ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE} connectionError;
 
-int requestServer(int action, int type, size_t dataSize, void* data) {
-  int fd[2];
-  struct Request r = createRequest(action, type, dataSize, data);
+int requestServer(Response * response, int action, int type, size_t dataSize, void * data) {
+  Request * request = createRequest(action, type, dataSize, data);
 
-  if(r == NULL){
+  if(request == NULL){
     printf("Failed to create request\n");   //no esta bueno poner printf en backend pero nos va a servir para debugear.
     return FAILED_ON_CREATE_REQUEST;                           //despues los borro
   }
@@ -18,11 +16,19 @@ int requestServer(int action, int type, size_t dataSize, void* data) {
     printf("Cannot create server reponse receiver\n");
     return ERROR_CREATE_SERVER_RESPONSE_RECIEVER;
   }
-  r.direction = fd[1];
-  r.directionSize = sizeof(int);
-  writeRequest(r);
+  request->direction = fd[1];
+  request->directionSize = sizeof(int);
+  writeRequest(request);
+  createResponse(response,fd[0]);
+  if(response == NULL){
+    return NULL;
+  }
+  return SUCCESS; 
+}
 
-  return fd[0];
+//TODO
+int getReponse(Response * response){
+  return 0;
 }
 
 int writeRequest (Request * request) {
@@ -35,19 +41,19 @@ int writeRequest (Request * request) {
   writeNamedPipe(fd, request -> direction, request -> directionSize);
 }
 
-struct Request getRequest() {
+//TODO We should redo this function. it doesn't work for structures of different sizes
+int getRequest(Request * request) {
   int aux_err;
-  struct Request * rta;
   int fd = 0;
   //TODO open pipe with its name and start reading from it
-  aux_err = read( fd, rta, sizeof(struct Request) );    
+  aux_err = read( fd, request, sizeof( Request ) );    
   if ( aux_err )
-    return rta;
+    return ERROR;
   return NOT_FOUND_ERR; // return NULL
 }
 
-//Change switch to array of void * functions
-void processRequest(struct Request r) {
+//TODO Change switch to array of void * functions
+int processRequest(Request * r) {
   switch (r -> action) {
     case READ:
       return readRequest(r);
@@ -59,5 +65,5 @@ void processRequest(struct Request r) {
       return deleteRequest(r);
       break;
   }
-  return;
+  return ERROR;
 }

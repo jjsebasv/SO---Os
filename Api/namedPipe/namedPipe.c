@@ -1,22 +1,3 @@
-#include "api.h"
-
-#define BLOCK 1024
-
-int open(void * something, connectionType type) {
-  switch (type) {
-    case PIPE :
-      return openPipe(something);
-      break;
-    case NAMED_PIPE :
-      return openNamedPipe(something);
-      break;
-    case IP :
-      return openSocket(something);
-      break;
-  }
-  return -1;
-}
-
 int openNamedPipe(char * something) {
   char[130] origin = '/tmp/';
 
