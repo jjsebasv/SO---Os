@@ -10,4 +10,4 @@ $(SERVER):
 clean:
 	rm -rf  *.o *.bin 
 
-.PHONY: all clean
+.PHONY: rm -rf *.o *.bin
