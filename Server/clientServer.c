@@ -10,7 +10,7 @@ static const int client_server_fd;
 int main (void){
 
 	fd_set set;  	//fds to monitor
-	struct Request * r;
+	Request * r;
 	struct timeval tv;
 
 	//initialize request queue
