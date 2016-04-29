@@ -11,14 +11,14 @@ enum requestStates {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQ
 // Direction - where to look for the data
 // Action - whethet to read or write
 
-typedef struct Request{
+typedef struct Request {
   int action;
   int type;
   size_t dataSize;
   void* data;
   size_t directionSize;
   void* direction;
-}Request;
+} Request;
 
 // To consider: Should the request have data to write?
 // If the request demands to write in a file for the user to read, then
@@ -27,12 +27,12 @@ typedef struct Request{
 // data could be null and filled with the information gotten.
 
 //direction: file's name / IP address / PIPE's fd / Named Pipe's name
-typedef struct Response{
+typedef struct Response {
   int directionSize;
   int responseSize;
   char * direction;
   char * response;
-}Response;
+} Response;
 
 
 //the client should use this function to start a request
@@ -51,7 +51,7 @@ int processRequest(Request * r);
 // Gets the response from the server
 int getReponse(Response * response)
 
-requestState readRequest(Request r);
+requestState readRequest(Request request);
 
-requestState writeRequest(Request r);
+requestState writeRequest(Request request);
 
