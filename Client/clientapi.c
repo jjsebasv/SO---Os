@@ -6,7 +6,7 @@
 #include "include/commons.h"
 
 static void sendRequest(Request * request) {
-	// escribir en la request queue
+	writeRequest(request);
 }
 
 /**
@@ -58,16 +58,15 @@ static void deleteStudent (char * name) {
 	sendRequest(&request);
 }
 
+
+/**
+ *	Delete a student from the data base
+ *
+ *	@param currentName:
+ *	@param newName:
+ *	@param :
+ */
 static void updateStudent (char * currentName, char * newName, double average) {
-	Student student;
-	student.name = newName;
-	student.average = average;
-
-	Request request;
-	request.action = UPDATE_STUDENT;
-	request.data = student;
-	request.dataSize = sizeof(student);
-	// como garcha la mandamos los dos datos para el update en data?
+	deleteStudent(currentName);
+	addStudent(newName, average);
 }
-
-static void 

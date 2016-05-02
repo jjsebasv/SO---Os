@@ -31,16 +31,6 @@ int getReponse(Response * response){
   return 0;
 }
 
-int writeRequest (Request * request) {
-
-  writeNamedPipe(fd, request -> action, sizeof(request -> action));
-  writeNamedPipe(fd, request -> type, sizeof(request -> type));
-  writeNamedPipe(fd, request -> dataSize, sizeof(request -> dataSize));
-  writeNamedPipe(fd, request -> data, request -> dataSize);
-  writeNamedPipe(fd, request -> directionSize, sizeof(request -> directionSize));
-  writeNamedPipe(fd, request -> direction, request -> directionSize);
-}
-
 //TODO We should redo this function. it doesn't work for structures of different sizes
 int getRequest(Request * request) {
   int aux_err;

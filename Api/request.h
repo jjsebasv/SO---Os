@@ -10,12 +10,11 @@
 
 typedef struct Request{
   int action;
-  int type;
   size_t dataSize;
   void* data;
   size_t directionSize;
   void* direction;
-}Request;
+} Request;
 
 // To consider: Should the request have data to write?
 // If the request demands to write in a file for the user to read, then
