@@ -27,7 +27,7 @@ int requestServer(Response * response, int action, int type, size_t dataSize, vo
 }
 
 //TODO
-int getReponse(Response * response){
+int getReponse(Response * response) {
   return 0;
 }
 
@@ -46,24 +46,26 @@ int getRequest(Request * request) {
   int aux_err;
   int fd = 0;
   //TODO open pipe with its name and start reading from it
+
+  // NAME is the named pipe name from where to read - should be a string
+  fd = open(NAME, O_READONLY);
+  request = (Request *)malloc(sizeof(Request));
   aux_err = read( fd, request, sizeof( Request ) );    
   if ( aux_err )
     return ERROR;
   return NOT_FOUND_ERR; // return NULL
 }
 
-//TODO Change switch to array of void * functions
 int processRequest(Request * r) {
-  switch (r -> action) {
-    case READ:
-      return readRequest(r);
-      break;
-    case CREATE:
-      return writeRequest(r);
-      break;
-    case DELETE:
-      return deleteRequest(r);
-      break;
-  }
-  return ERROR;
+  int to_execute = r -> action;
+  int (*functionChooser[3]) (Request * r);
+  
+  functionChooser[0] = readRequest;
+  functionChooser[1] = writeRequest;
+  functionChooser[2] = deleteRequest;
+  
+  if (to_execute != READ && to_execute != CREATE && to_execute != DELETE)
+    return ERROR;
+  
+  return (*functionChooser[to_execute]) (r);
 }
