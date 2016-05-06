@@ -4,16 +4,12 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-typedef enum connections {PIPE = 0, SOCKET, NAMED_PIPE, IP} connectionType;
-enum requestStates {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
-
 // Type - whether is a file / IP / PIPE / Named Pipe
 // Direction - where to look for the data
 // Action - whethet to read or write
 
 typedef struct Request {
   int action;
-  int type;
   size_t dataSize;
   void* data;
   size_t directionSize;

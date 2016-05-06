@@ -7,6 +7,7 @@
 
 
 #define BLOCK 1024 
+#define NAMED_PIPE_QUEUE "name"
 
 int openNamedPipe(char * something);
 

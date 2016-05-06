@@ -17,6 +17,16 @@ void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
 }
 
+void writeRequest (Request * request) {
+
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> action, sizeof(request -> action));
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> type, sizeof(request -> type));
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> dataSize, sizeof(request -> dataSize));
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> data, request -> dataSize);
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> directionSize, sizeof(request -> directionSize));
+  writeNamedPipe(NAMED_PIPE_QUEUE, request -> direction, request -> directionSize);
+}
+
 void readNamedPipe (int fd) {
   char writeBuffer[BLOCK];
   
