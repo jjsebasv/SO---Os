@@ -17,7 +17,7 @@ void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
 }
 
-int writeRequest (Request * request) {
+void writeRequest (Request * request) {
 
   writeNamedPipe(NAMED_PIPE_QUEUE, request -> action, sizeof(request -> action));
   writeNamedPipe(NAMED_PIPE_QUEUE, request -> type, sizeof(request -> type));
