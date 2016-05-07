@@ -13,7 +13,12 @@
 #define INVALID_COMMAND	"Invalid command:\n"
 #define MAX_NAME_CHARACTERS 100
 #define WELCOME "Welcome to giladita system\n"
-#define ENTER_COMMAND "Please enter your command (enter 0 for help):\n"
+#define ENTER_COMMAND "Please enter your command (enter 0 for help): "
+
+static void cleanBuffer () {
+	char c;
+	while ( (c = getchar()) != '\n' && c != EOF );
+}
 
 static void addStudent () {
 	char name[MAX_NAME_CHARACTERS];
@@ -52,9 +57,9 @@ static void updateStudent () {
 }
 
 static void help () {
-	printf("%s\n", ADD_STUDENT_HELP);
-	printf("%s\n", UPDATE_STUDENT_HELP);
-	printf("%s\n", DELETE_STUDENT_HELP);
+	printf("%s", ADD_STUDENT_HELP);
+	printf("%s", UPDATE_STUDENT_HELP);
+	printf("%s", DELETE_STUDENT_HELP);
 }
 
 static void invalidCommand () {
@@ -63,6 +68,8 @@ static void invalidCommand () {
 
 
 static void getCommand (int command) {
+	printf("COMMAND%d\n", command);
+
 	switch (command) {
 
 		case ADD_STUDENT:
@@ -82,6 +89,7 @@ static void getCommand (int command) {
 			break;
 
 		default:
+			cleanBuffer();
 			invalidCommand();
 	}
 }
@@ -93,6 +101,7 @@ int main() {
 
 	while (1) {
 		command = 0;
+		int ret;
 
 		printf(ENTER_COMMAND);
 		scanf("%d", &command);
