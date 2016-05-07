@@ -48,8 +48,4 @@ int getRequest(Request * request);
 int processRequest(Request * r);
 
 // Gets the response from the server
-int getReponse(Response * response)
-
-requestState readRequest(Request request);
-
-requestState writeRequest(Request request);
+int getReponse(Response * response);

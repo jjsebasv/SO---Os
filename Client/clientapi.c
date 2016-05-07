@@ -1,22 +1,21 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "include/commons.h"
+#include "../Api/request.h"
+#include "client.h"
+#include "../Api/commons.h"
 
-static void sendRequest(Request * request) {
+void sendRequest(Request * request) {
 	// escribir la request en la queue
-	writeRequest(request);
 }
 
-/**
- *	Add a student to the data base
- */
-static void apiAddStudent (char * name, double average) {
-	Student student;
-	student.name = name;
-	student.average = average;
+void apiAddStudent (char * name, double average) {
+	Student *student = malloc(sizeof(Student));
+	student->name = name;
+	student->average = average;
 	Request request;
 	request.action = ADD_STUDENT;
 	request.data = student;
@@ -25,10 +24,7 @@ static void apiAddStudent (char * name, double average) {
 	sendRequest(&request);
 }
 
-/**
- *	Delete a student from the data base
- */
-static void apiDeleteStudent (char * name) {
+void apiDeleteStudent (char * name) {
 	Request request;
 	request.action = DELETE_STUDENT;
 	request.data = name;
@@ -36,10 +32,7 @@ static void apiDeleteStudent (char * name) {
 	sendRequest(&request);
 }
 
-/**
- *	Update a student from the data base
- */
-static void apiUpdateStudent (char * currentName, char * newName, double average) {
-	deleteStudent(currentName);
-	addStudent(newName, average);
+void apiUpdateStudent (char * currentName, char * newName, double average) {
+	apiDeleteStudent(currentName);
+	apiAddStudent(newName, average);
 }

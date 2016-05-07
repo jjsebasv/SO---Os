@@ -1,39 +1,23 @@
 #include <stdio.h>
 
+#include "../Api/commons.h"
+#include "../Api/request.h"
+#include "client.h"
+
 #define ADD_STUDENT_HELP "(1) Add a new student\n"
 #define UPDATE_STUDENT_HELP "(2) Update a student\n"
 #define DELETE_STUDENT_HELP "(3) Delete a student\n"
 #define STUDENT_NAME_MESSAGE "Student name:\t"
-#define STUDENT_NAME_MESSAGE "Student average:\t"
+#define STUDENT_AVERAGE_MESSAGE "Student average:\t"
 #define STUDENT_CURRENT_NAME_MESSAGE "Current student name:\t"
 #define INVALID_COMMAND	"Invalid command:\n"
 #define MAX_NAME_CHARACTERS 100
 #define WELCOME "Welcome to giladita system\n"
-#define ENTER_COMMAND "Please enter your command (enter 0 for help):\n"
+#define ENTER_COMMAND "Please enter your command (enter 0 for help): "
 
-
-static void getCommand (int command) {
-	swich (command) {
-
-		case ADD_STUDENT:
-			addStudent();
-			break;
-
-		case UPDATE_STUDENT:
-			updateStudent();
-			break;
-
-		case DELETE_STUDENT:
-			deleteStudent();
-			break;
-
-		case HELP: 
-			help();
-			break;
-
-		default:
-			invalidCommand();
-	}
+static void cleanBuffer () {
+	char c;
+	while ( (c = getchar()) != '\n' && c != EOF );
 }
 
 static void addStudent () {
@@ -42,7 +26,8 @@ static void addStudent () {
 	scanf("%s" , name);
 
 	printf("%s\n", STUDENT_AVERAGE_MESSAGE);
-	double average = getdouble();
+	double average;
+	scanf("%lf",&average);
 
 	apiAddStudent(name, average);
 }
@@ -65,19 +50,48 @@ static void updateStudent () {
 	scanf("%s" , newName);
 
 	printf("%s\n", STUDENT_AVERAGE_MESSAGE);
-	double average = getdouble();
+	double average;
+	scanf("%lf",&average);
 
 	apiUpdateStudent(currentName, newName, average);
 }
 
 static void help () {
-	printf("%s\n", ADD_STUDENT_HELP);
-	printf("%s\n", UPDATE_STUDENT_HELP);
-	printf("%s\n", DELETE_STUDENT_HELP);
+	printf("%s", ADD_STUDENT_HELP);
+	printf("%s", UPDATE_STUDENT_HELP);
+	printf("%s", DELETE_STUDENT_HELP);
 }
 
 static void invalidCommand () {
 	printf("%s\n", INVALID_COMMAND);
+}
+
+
+static void getCommand (int command) {
+	printf("COMMAND%d\n", command);
+
+	switch (command) {
+
+		case ADD_STUDENT:
+			addStudent();
+			break;
+
+		case UPDATE_STUDENT:
+			updateStudent();
+			break;
+
+		case DELETE_STUDENT:
+			deleteStudent();
+			break;
+
+		case HELP: 
+			help();
+			break;
+
+		default:
+			cleanBuffer();
+			invalidCommand();
+	}
 }
 
 int main() {
@@ -87,6 +101,7 @@ int main() {
 
 	while (1) {
 		command = 0;
+		int ret;
 
 		printf(ENTER_COMMAND);
 		scanf("%d", &command);
