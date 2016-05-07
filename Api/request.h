@@ -22,14 +22,17 @@ typedef struct Request {
 // If the request demands to read from the file that the user wrote, then
 // data could be null and filled with the information gotten.
 
-//direction: file's name / IP address / PIPE's fd / Named Pipe's name
+// direction: file's name / IP address / PIPE's fd / Named Pipe's name
 typedef struct Response {
-  int directionSize;
+  // int directionSize;
+  // void * direction;
   int responseSize;
-  char * direction;
+  union {
+     int ip;
+     char *path;
+  } direction;
   char * response;
 } Response;
-
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
@@ -50,4 +53,3 @@ int getReponse(Response * response)
 requestState readRequest(Request request);
 
 requestState writeRequest(Request request);
-
