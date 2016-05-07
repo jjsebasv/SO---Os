@@ -7,6 +7,4 @@ TODO
 > writeRequest(r)
 
 > Vamo a calmarno
-
-
-podemos borrar el type de la request no? 
+incluir get int y getdouble
