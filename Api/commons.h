@@ -1,11 +1,14 @@
 #ifndef _COMMONS_H_
 #define _COMMONS_H_
 
-typedef enum { HELP,
+typedef enum {
+				HELP = 0,
 				ADD_STUDENT,
 				UPDATE_STUDENT,
 				DELETE_STUDENT,
-				} Action;
+				READ_STUDENT,
+				ACTION_COUNT
+} Action;
 
 typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS } connectionStates;
 

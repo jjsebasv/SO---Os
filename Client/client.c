@@ -66,47 +66,22 @@ static void invalidCommand () {
 	printf("%s\n", INVALID_COMMAND);
 }
 
-// TO DO WITHOUT SWTICH
-
-// int processRequest(Request * r) {
-//   int to_execute = r -> action;
-//   int (*functionChooser[3]) (Request * r);
-
-//   functionChooser[0] = readRequest;
-//   functionChooser[1] = writeRequest;
-//   functionChooser[2] = deleteRequest;
-
-//   if (to_execute != UPDATE_STUDENT && to_execute != ADD_STUDENT && to_execute != DELETE_STUDENT)
-//     return ERROR;
-
-//   return (*functionChooser[to_execute])(r);
-// }
-
-
 static void getCommand (int command) {
 	printf("COMMAND%d\n", command);
+	int (*functionChooser[4]);
+	functionChooser[HELP] = help;
+	functionChooser[ADD_STUDENT] = addStudent;
+	functionChooser[UPDATE_STUDENT] = updateStudent;
+	functionChooser[DELETE_STUDENT] = deleteStudent;
+	// TO DO
+	// functionChooser[READ_STUDENT] = readStudent;
 
-	switch (command) {
-
-		case ADD_STUDENT:
-			addStudent();
-			break;
-
-		case UPDATE_STUDENT:
-			updateStudent();
-			break;
-
-		case DELETE_STUDENT:
-			deleteStudent();
-			break;
-
-		case HELP: 
-			help();
-			break;
-
-		default:
-			cleanBuffer();
-			invalidCommand();
+	if ( command >= 0 && command < ACTION_COUNT ) {
+		// Not sure if last () go there
+		(*functionChooser[command]());
+	} else  {
+		cleanBuffer();
+		invalidCommand();
 	}
 }
 
