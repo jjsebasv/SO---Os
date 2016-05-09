@@ -1,8 +1,14 @@
+#ifndef _REQUEST_H_
+#define _REQUEST_H_
+
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include "commons.h"
+
+typedef enum {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
 
 // Type - whether is a file / IP / PIPE / Named Pipe
 // Direction - where to look for the data
@@ -16,30 +22,13 @@ typedef struct Request {
   void* direction;
 } Request;
 
-// To consider: Should the request have data to write?
-// If the request demands to write in a file for the user to read, then
-// there should be something in the data.
-// If the request demands to read from the file that the user wrote, then
-// data could be null and filled with the information gotten.
-
-// direction: file's name / IP address / PIPE's fd / Named Pipe's name
-typedef struct Response {
-  // int directionSize;
-  // void * direction;
-  int responseSize;
-  union {
-     int ip;
-     char *path;
-  } direction;
-  char * response;
-} Response;
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
-int requestServer(Response * response, int action, int type, size_t dataSize, void * data);
+int requestServer(Connection * connection, int action, int type, size_t dataSize, void * data);
 
 // Write a request in the request queue
-int writeRequest (Request * request);
+requestState writeRequest(Request * r);
 
 // Get the first request in the request queue
 int getRequest(Request * request);
@@ -47,5 +36,15 @@ int getRequest(Request * request);
 // Process a request
 int processRequest(Request * r);
 
-// Gets the response from the server
-int getReponse(Response * response);
+// Gets the Connection from the server
+int getConnection(Connection * connection);
+
+Request * createRequest(int action, int type, size_t dataSize, void *data);
+
+requestState readRequest(Request r);
+
+requestState deleteRequest(Request r);
+
+void createConnection(Connection * connection);
+
+#endif

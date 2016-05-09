@@ -3,18 +3,21 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <stdio.h>
+#include "../Api/commons.h"
+#include "../Api/request.h"
 
 
-static const int client_server_fd;
-
-int main (void){
+int main (int argc, char const *argv[]){
 
 	fd_set set;  	//fds to monitor
+	int client_server_fd;
 	Request * r;
 	struct timeval tv;
+	Connection *c;
 
-	//initialize request queue
-	if( !client_server_fd = openNamedPipe("RequestQueue") ) {
+	// //initialize request queue TODO REDO
+	if( c = openConnection(c)) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
@@ -24,12 +27,13 @@ int main (void){
 
 	//waits 2 seconds
 	tv.tv_sec = 2;
-  tv.tv_usec = 0;
+  	tv.tv_usec = 0;
 
 	while(1){
 		// if something was written
-		if( select(1, set, NULL, NULL, tv) > 0){
-			r = getRequest(client_server_fd);
+		if( select(1, &set, NULL, NULL, &tv) > 0){
+			// TO DO
+			// r = getRequest(client_server_fd);
 			if( r != NULL ){
 				processRequest(r);
 			}
@@ -39,5 +43,3 @@ int main (void){
 	}
 	return 0;
 }
-
-

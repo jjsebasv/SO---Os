@@ -66,31 +66,22 @@ static void invalidCommand () {
 	printf("%s\n", INVALID_COMMAND);
 }
 
-
 static void getCommand (int command) {
 	printf("COMMAND%d\n", command);
+	int (*functionChooser[4]);
+	functionChooser[HELP] = help;
+	functionChooser[ADD_STUDENT] = addStudent;
+	functionChooser[UPDATE_STUDENT] = updateStudent;
+	functionChooser[DELETE_STUDENT] = deleteStudent;
+	// TO DO
+	// functionChooser[READ_STUDENT] = readStudent;
 
-	switch (command) {
-
-		case ADD_STUDENT:
-			addStudent();
-			break;
-
-		case UPDATE_STUDENT:
-			updateStudent();
-			break;
-
-		case DELETE_STUDENT:
-			deleteStudent();
-			break;
-
-		case HELP: 
-			help();
-			break;
-
-		default:
-			cleanBuffer();
-			invalidCommand();
+	if ( command >= 0 && command < ACTION_COUNT ) {
+		// Not sure if last () go there
+		(*functionChooser[command]());
+	} else  {
+		cleanBuffer();
+		invalidCommand();
 	}
 }
 

@@ -1,17 +1,38 @@
 #ifndef _COMMONS_H_
 #define _COMMONS_H_
 
-typedef enum { HELP,
+typedef enum {
+				HELP = 0,
 				ADD_STUDENT,
 				UPDATE_STUDENT,
 				DELETE_STUDENT,
-				} Action;
+				READ_STUDENT,
+				ACTION_COUNT
+} Action;
 
-typedef enum { REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST } requestState;
+typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS } connectionStates;
 
 typedef struct Student {
   char * name;
   double average;
 } Student;
+
+
+typedef struct NPConnection {
+  int fd;
+  int responseSize;
+  char* response;
+} NPConnection;
+
+//TODO
+typedef struct SConnection {
+} SConnection;
+
+typedef union Connection {
+	NPConnection * np;
+	SConnection * sc;
+} Connection;
+
+Connection* openConnection (Connection * connection);
 
 #endif
