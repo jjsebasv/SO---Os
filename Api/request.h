@@ -28,7 +28,7 @@ typedef struct Request {
 int requestServer(Connection * connection, int action, int type, size_t dataSize, void * data);
 
 // Write a request in the request queue
-requestState writeRequest(Request * r);
+requestState writeRequest(Request * request, Connection * connection);
 
 // Get the first request in the request queue
 int getRequest(Request * request);

@@ -7,7 +7,7 @@ typedef enum { HELP,
 				DELETE_STUDENT,
 				} Action;
 
-typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS } connectionStates;
+typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS, ERROR, NOT_FOUND_ERR, O_READONLY } connectionStates;
 
 typedef struct Student {
   char * name;

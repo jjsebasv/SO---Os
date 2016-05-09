@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "namedPipe.h" 
 #include "../request.h"
 
@@ -21,16 +22,15 @@ void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
 }
 
-int writeRequest(Request * request) {
+requestState writeRequest(Request * request, Connection * connection) {
 
-  writeNamedPipe(REQUEST_QUEUE, request -> action, sizeof(request -> action));
-  writeNamedPipe(REQUEST_QUEUE, request -> type, sizeof(request -> type));
-  writeNamedPipe(REQUEST_QUEUE, request -> dataSize, sizeof(request -> dataSize));
-  writeNamedPipe(REQUEST_QUEUE, request -> data, request -> dataSize);
-  writeNamedPipe(REQUEST_QUEUE, request -> directionSize, sizeof(request -> directionSize));
-  writeNamedPipe(REQUEST_QUEUE, request -> direction, request -> directionSize);
+  writeNamedPipe(connection->np->fd, request -> action, sizeof(request -> action));
+  writeNamedPipe(connection->np->fd, request -> dataSize, sizeof(request -> dataSize));
+  writeNamedPipe(connection->np->fd, request -> data, request -> dataSize);
+  writeNamedPipe(connection->np->fd, request -> directionSize, sizeof(request -> directionSize));
+  writeNamedPipe(connection->np->fd, request -> direction, request -> directionSize);
 
-  return SUCCESS;
+  return REQUEST_OK;
 }
 
 int readNamedPipe (int fd, char * buffer) {
@@ -69,18 +69,18 @@ int getRequest(Request * request) {
 
 // getResponse defined for namedPipe
 // response -> direction is, in this case, the path
-int getReponse(Response * response) {
+int getResponse(Connection * connection) {
   int aux_err = 0;
-  int fd = openNamedPipe(response -> direction);
-  aux_err = readNamedPipe(fd, response -> response);
-  closeNamedPipe( fd, response -> direction );
+  int fd = connection->np->fd;
+  aux_err = readNamedPipe(fd, connection -> np->response);
+  closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
     return ERROR;
-  response -> responseSize = aux_err;
+  connection -> np -> responseSize = aux_err;
   return NOT_FOUND_ERR; // return NULL
 }
 
 Connection* openConnection (Connection * connection){
-  connection->connection = openNamedPipe (REQUEST_QUEUE);
+  connection->np->fd = openNamedPipe (REQUEST_QUEUE);
   return connection; 
 }

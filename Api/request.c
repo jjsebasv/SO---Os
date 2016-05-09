@@ -16,7 +16,7 @@ int requestServer(Connection * connection, int action, int type, size_t dataSize
 
   request->direction = fd[1];
   request->directionSize = sizeof(int);
-  writeRequest(request);
+  writeRequest(request, connection);
   createConnection(connection);
   if(connection == NULL){
     return NULL;
