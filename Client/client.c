@@ -66,6 +66,22 @@ static void invalidCommand () {
 	printf("%s\n", INVALID_COMMAND);
 }
 
+// TO DO WITHOUT SWTICH
+
+// int processRequest(Request * r) {
+//   int to_execute = r -> action;
+//   int (*functionChooser[3]) (Request * r);
+
+//   functionChooser[0] = readRequest;
+//   functionChooser[1] = writeRequest;
+//   functionChooser[2] = deleteRequest;
+
+//   if (to_execute != UPDATE_STUDENT && to_execute != ADD_STUDENT && to_execute != DELETE_STUDENT)
+//     return ERROR;
+
+//   return (*functionChooser[to_execute])(r);
+// }
+
 
 static void getCommand (int command) {
 	printf("COMMAND%d\n", command);

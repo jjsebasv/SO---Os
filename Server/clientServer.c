@@ -1,10 +1,11 @@
-#include "../Api/request.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "../Api/commons.h"
+#include "../Api/request.h"
 
 
 int main (int argc, char const *argv[]){
@@ -13,10 +14,10 @@ int main (int argc, char const *argv[]){
 	int client_server_fd;
 	Request * r;
 	struct timeval tv;
-	Connection* c;
+	Connection *c;
 
-	// //initialize request queue
-	if( !client_server_fd = openConnection(c)) {
+	// //initialize request queue TODO REDO
+	if( c = openConnection(c)) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
@@ -31,7 +32,8 @@ int main (int argc, char const *argv[]){
 	while(1){
 		// if something was written
 		if( select(1, &set, NULL, NULL, &tv) > 0){
-			r = getRequest(client_server_fd);
+			// TO DO
+			// r = getRequest(client_server_fd);
 			if( r != NULL ){
 				processRequest(r);
 			}
