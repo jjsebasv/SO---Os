@@ -1,12 +1,18 @@
-#TODO CHOOSE BETWEEN NAMEDPIPE OR SOCKET IMPLEMENTATION
 CLIENT=client.bin
+SOURCES_API=$(wildcard ../Api/*.c)
 SOURCES_NP=$(wildcard ../Api/namedPipe/*.c)
 SOURCES_ST=$(wildcard ../Api/socket/*.c)
+SOURCES_CLIENT=$(wildcard ./*.c)
 
-all:  $(CLIENT)
+allST:  $(CLIENTST)
 
-$(CLIENT):
-	gcc $(SOURCES_ST) $(SOURCES_NP) -o $(CLIENT) $(STATICLIBS)
+allNP: $(CLIENTNP)
+
+$(CLIENTNP):
+	gcc $(SOURCES_NP) $(SOURCES_CLIENT) $(SOURCES_API) -o $(CLIENT)
+
+$(CLIENTST):
+	gcc $(SOURCES_ST) $(SOURCES_CLIENT) $(SOURCES_API) -o $(CLIENT)
 
 clean:
 	rm -rf  *.o *.bin 
