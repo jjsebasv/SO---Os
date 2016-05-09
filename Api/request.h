@@ -18,6 +18,21 @@ typedef struct Request {
   void* direction;
 } Request;
 
+typedef struct NPConnection{
+  int fd;
+  int responseSize;
+  char* response;
+} NPConnection;
+
+//TODO
+typedef struct SConnection{
+} SConnection;
+
+typedef union Connection {
+	NPConnection * np;
+	SConnection * sc;
+} Connection;
+
 //the client should use this function to start a request
 //request is initialized and sent to the server
 int requestServer(Connection * connection, int action, int type, size_t dataSize, void * data);
@@ -31,6 +46,9 @@ int getRequest(Request * request);
 // Process a request
 int processRequest(Request * r);
 
-requestState readRequest(Request r);
+// Gets the Connection from the server
+int getConnection(Connection * connection)
 
-requestState writeRequest(Request r);
+// requestState readRequest(Request r);
+
+// requestState writeRequest(Request r);

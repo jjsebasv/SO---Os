@@ -23,6 +23,12 @@ int requestServer(Connection * connection, int action, int type, size_t dataSize
   return SUCCESS; 
 }
 
+//TODO
+int getConnection(Connection * connection){
+  return 0;
+}
+
+//TODO We should redo this function. it doesn't work for structures of different sizes
 int getRequest(Request * request) {
   int aux_err;
   int fd = 0;
