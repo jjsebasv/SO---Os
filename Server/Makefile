@@ -5,7 +5,7 @@ SOURCES_ST=$(wildcard ../Api/socket/*.c)
 all:  $(SERVER)
 
 $(SERVER):
-	gcc $(SOURCES_ST) $(SOURCES_NP) -o $(SERVER) $(STATICLIBS)
+	gcc $(SOURCES_ST) $(SOURCES_NP) -o $(SERVER)
 
 clean:
 	rm -rf  *.o *.bin 

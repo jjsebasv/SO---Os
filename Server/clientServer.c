@@ -1,3 +1,4 @@
+#include "../Api/request.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -5,16 +6,15 @@
 #include <unistd.h>
 
 
-static const int client_server_fd;
-
 int main (void){
 
 	fd_set set;  	//fds to monitor
+
 	Request * r;
 	struct timeval tv;
 
 	//initialize request queue
-	if( !client_server_fd = openNamedPipe("RequestQueue") ) {
+	if( !client_server_fd = openConnection() {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 

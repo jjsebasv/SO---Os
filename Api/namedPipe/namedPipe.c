@@ -1,14 +1,17 @@
-int openNamedPipe(char * something) {
-  char[130] origin = '/tmp/';
+  #include "namedPipe.h" 
 
+  int openNamedPipe(char * something) {
+  char origin[] = "/tmp/";
+  char myfifo[80];
   int fd;
-  char * myfifo = strcat(origin,something);
 
+  strcpy(myfifo,origin);
+  strcat(myfifo,something);
   mkfifo(myfifo, 0666);
 
   // no estamos validando que open devuelva -1 no?
   // llamada recursiva?
-  fd = open(myfifo, NAMED_PIPE);
+  fd = open(myfifo, O_CREAT);
 
   return fd;
 }
@@ -37,7 +40,7 @@ int readNamedPipe (int fd, char * buffer) {
 }
 
 int closeNamedPipe(int fd, char * something) {
-  char[130] origin = '/tmp/';
+  char origin[] = "/tmp/";
   char * myfifo = strcat(origin,something);
 
   close(fd);
@@ -57,4 +60,9 @@ int getReponse(Response * response) {
     return ERROR;
   response -> responseSize = aux_err;
   return NOT_FOUND_ERR; // return NULL
+}
+
+Connection* openConnection (Connection * connection){
+  connection->connection = openNamedPipe (REQUEST_QUEUE);
+  return connection; 
 }

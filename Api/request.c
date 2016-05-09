@@ -1,10 +1,10 @@
-#include "ipc.h"
 #include "request.h"
 
 #define NOT_FOUND_ERR   NULL
-enum connectionsErrors {ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE} connectionError;
 
-int requestServer(Response * response, int action, int type, size_t dataSize, void * data) {
+enum connectionsErrors { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE } connectionError;
+
+int requestServer(Connection * connection, int action, int type, size_t dataSize, void * data) {
   Request * request = createRequest(action, type, dataSize, data);
 
   if(request == NULL){
@@ -12,29 +12,15 @@ int requestServer(Response * response, int action, int type, size_t dataSize, vo
     return FAILED_ON_CREATE_REQUEST;                           //despues los borro
   }
 
-  if(pipe(fd) != 0){
-    printf("Cannot create server reponse receiver\n");
-    return ERROR_CREATE_SERVER_RESPONSE_RECIEVER;
-  }
   request->direction = fd[1];
   request->directionSize = sizeof(int);
   writeRequest(request);
-  createResponse(response,fd[0]);
-  if(response == NULL){
+  createConnection(connection);
+  if(connection == NULL){
     return NULL;
   }
-  return SUCCESS;
-}
-
-//TODO We should redo this function. it doesn't work for structures of different sizes
-int writeRequest (Request * request) {
-
-  writeNamedPipe(fd, request -> action, sizeof(request -> action));
-  writeNamedPipe(fd, request -> type, sizeof(request -> type));
-  writeNamedPipe(fd, request -> dataSize, sizeof(request -> dataSize));
-  writeNamedPipe(fd, request -> data, request -> dataSize);
-  writeNamedPipe(fd, request -> directionSize, sizeof(request -> directionSize));
-  writeNamedPipe(fd, request -> direction, request -> directionSize);
+  connection -> direction = fd[0];
+  return SUCCESS; 
 }
 
 int getRequest(Request * request) {
@@ -50,6 +36,7 @@ int getRequest(Request * request) {
     return ERROR;
   return NOT_FOUND_ERR; // return NULL
 }
+
 
 int processRequest(Request * r) {
   int to_execute = r -> action;
