@@ -22,10 +22,10 @@ static void cleanBuffer () {
 
 static void addStudent () {
 	char name[MAX_NAME_CHARACTERS];
-	printf("%s\n", STUDENT_NAME_MESSAGE);
+	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , name);
 
-	printf("%s\n", STUDENT_AVERAGE_MESSAGE);
+	printf("%s", STUDENT_AVERAGE_MESSAGE);
 	double average;
 	scanf("%lf",&average);
 
@@ -34,7 +34,7 @@ static void addStudent () {
 
 static void deleteStudent () {
 	char name[MAX_NAME_CHARACTERS];
-	printf("%s\n", STUDENT_NAME_MESSAGE);
+	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , name);
 	apiDeleteStudent(name);
 }
@@ -43,13 +43,13 @@ static void updateStudent () {
 	char currentName[MAX_NAME_CHARACTERS];
 	char newName[MAX_NAME_CHARACTERS];
 
-	printf("%s\n", STUDENT_CURRENT_NAME_MESSAGE);
+	printf("%s", STUDENT_CURRENT_NAME_MESSAGE);
 	scanf("%s" , currentName);
 
-	printf("%s\n", STUDENT_NAME_MESSAGE);
+	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , newName);
 
-	printf("%s\n", STUDENT_AVERAGE_MESSAGE);
+	printf("%s", STUDENT_AVERAGE_MESSAGE);
 	double average;
 	scanf("%lf",&average);
 
@@ -84,7 +84,6 @@ static void invalidCommand () {
 
 
 static void getCommand (int command) {
-	printf("COMMAND%d\n", command);
 
 	switch (command) {
 

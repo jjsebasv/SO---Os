@@ -1,4 +1,9 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netdb.h>
 #include "namedPipe.h" 
 #include "../request.h"
 
@@ -33,6 +38,7 @@ requestState writeRequest(Request * request, int fd) {
 }
 
 int readNamedPipe (int fd, char * buffer) {
+  printf("readNamedPipe\n");
   buffer = malloc(BLOCK * sizeof(char));
   int q = 0;
   q = read(fd, buffer, BLOCK);
@@ -42,6 +48,7 @@ int readNamedPipe (int fd, char * buffer) {
 }
 
 int closeNamedPipe(int fd, char * something) {
+  printf("closeNamedPipe\n");
   char origin[] = "/tmp/";
   char * myfifo = strcat(origin,something);
 
@@ -66,17 +73,17 @@ int closeNamedPipe(int fd, char * something) {
 //   return NOT_FOUND_ERR; // return NULL
 // }
 
-// getResponse defined for namedPipe
-// response -> direction is, in this case, the path
 int getResponse(Connection * connection) {
   int aux_err = 0;
+  printf("Get response\n");
   int fd = connection->np->fd;
+  printf("Get response\n");
   aux_err = readNamedPipe(fd, connection -> np->data);
   closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
     return ERROR;
   connection -> np -> dataSize = aux_err;
-  return NOT_FOUND_ERR; // return NULL
+  return NOT_FOUND_ERR;
 }
 
 Connection* openConnection (void){
@@ -90,7 +97,7 @@ Connection* openConnection (void){
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
   Request * request;
   Connection * c;
-  // REDO WITHOUT NAME PIPES
+
   int fd[2];
   int* NPfd;
 
@@ -113,11 +120,10 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   NPfd = openNamedPipe(REQUEST_QUEUE); //TODO check failure
   writeRequest(request, NPfd[1]);
 
+  printf("Success\n");
   return SUCCESS; 
 }
 
-
-//TODO malloc check fails
 Request * createRequest(int action, int fd, size_t dataSize, void * data){
   Request * request;
 
@@ -133,20 +139,8 @@ Request * createRequest(int action, int fd, size_t dataSize, void * data){
   return request;
 }
 
-//TODO malloc check fails
-Connection * createConnection(int fd){
-  Connection * connection;
-  
-  connection = malloc(sizeof(Connection));
-  connection -> np = malloc(sizeof(NPConnection));
-
-  connection -> np -> fd = fd;
-
-  return connection;
+void monitorConnection(Connection * connection, fd_set* set){
+  FD_ZERO(set);
+  FD_SET(connection -> np -> fd, set);
+  return;
 }
-
-  void monitorConnection(Connection * connection, fd_set* set){
-    FD_ZERO(set);
-    FD_SET(connection -> np -> fd, set);
-    return;
-  }

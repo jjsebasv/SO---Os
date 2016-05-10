@@ -9,6 +9,7 @@
 #include "commons.h"
 
 typedef enum {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
+
 typedef struct Request {	
   int action;
   Connection * connection;
@@ -21,7 +22,6 @@ requestState writeRequest(Request * request, int fd);
 Request * getRequest(Connection * connection);
 
 int processRequest(Request * request);
-Request * createRequest(int action, size_t dataSize, void *data);
 requestState readRequest(Request request);
 requestState deleteRequest(Request request);
 
