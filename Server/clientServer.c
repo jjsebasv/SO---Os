@@ -11,31 +11,30 @@
 int main (int argc, char const *argv[]){
 
 	fd_set set;  	//fds to monitor
-	int client_server_fd;
 	Request * r;
 	struct timeval tv;
 	Connection *c;
 
 	// //initialize request queue TODO REDO
-	if( c = openConnection(c)) {
+
+	if( (c = openConnection()) == NULL) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
 	//sets up the fds to monitor
-	FD_ZERO(&set);
-	FD_SET(client_server_fd, &set);
+	monitorConnection(c, &set);
 
 	//waits 2 seconds
 	tv.tv_sec = 2;
   	tv.tv_usec = 0;
 
 	while(1){
-		// if something was written
+
 		if( select(1, &set, NULL, NULL, &tv) > 0){
-			// TO DO
-			// r = getRequest(client_server_fd);
+
+			//r = getRequest(c);
 			if( r != NULL ){
-				processRequest(r);
+				// TODO processRequest(r);
 			}
 		} else {
 			printf("No requests to process\n");
