@@ -78,12 +78,15 @@ int closeNamedPipe(int fd, char * something) {
 
 //TODO We should redo this function. it doesn't work for structures of different sizes
 Request * getRequest(Connection * connection) {
-  int aux_err;
+  int aux_err, action, fd;
+  size_t dataSize;
+  void * data;
   Request * request;
-  int fd = connection -> np -> fd;
 
-  request = createRequest (int action, int fd, size_t dataSize, void * data);
-  aux_err = read( fd, request, sizeof( Request ) );
+  aux_err = read( connection -> np -> fd, request, sizeof( Request ) );
+
+  request = createRequest (action, fd, dataSize, data);
+  aux_err = read( connection -> np -> fd, request, sizeof( Request ) );
   if ( aux_err )
     return ERROR;
   return NOT_FOUND_ERR; // return NULL
