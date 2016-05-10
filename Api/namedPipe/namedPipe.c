@@ -25,12 +25,10 @@ void writeNamedPipe(int fd, void * data, int size) {
 }
 
 requestState writeRequest(Request * request, int fd) {
-
   writeNamedPipe(fd, &request -> action, sizeof(request -> action));
   writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
   writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
   writeNamedPipe(fd, &request -> connection -> np -> data, request -> connection -> np -> dataSize);
-
   return REQUEST_OK;
 }
 

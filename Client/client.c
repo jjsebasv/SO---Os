@@ -117,7 +117,6 @@ int main() {
 
 	while (1) {
 		command = 0;
-		int ret;
 
 		printf(ENTER_COMMAND);
 		scanf("%d", &command);
