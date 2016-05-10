@@ -17,19 +17,22 @@ typedef struct Student {
 
 typedef struct NPConnection {
   int fd;
-  int responseSize;
-  char* response;
+  int dataSize;
+  char* data;
 } NPConnection;
 
 //TODO
 typedef struct SConnection {
-} SConnection;
+} STConnection;
 
 typedef union Connection {
 	NPConnection * np;
-	SConnection * sc;
+	STConnection * st;
 } Connection;
 
-Connection* openConnection (Connection * connection);
+//OPENS REQUEST QUEUE
+Connection* openConnection (void);
+
+void monitorConnection(Connection * connection, fd_set* set);
 
 #endif

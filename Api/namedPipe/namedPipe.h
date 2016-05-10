@@ -9,18 +9,31 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include "../commons.h"
+#include "../request.h"
 
+#define NOT_FOUND_ERR 0
 
 #define REQUEST_QUEUE "giladita"
 
 #define BLOCK 1024 
 
-int openNamedPipe(char * something);
+//the client should use this function to start a request
+//request is initialized and sent to the server
+int requestServer(Connection * connection, int action, size_t dataSize, void * data);
+
+Request * createRequest(int action, int fd, size_t dataSize, void * data);
+
+Connection * createConnection(int fd);
+
+int * openNamedPipe(char * something);
 
 void writeNamedPipe(int fd, void * data, int size);
 
 int readNamedPipe (int fd, char * buffer);
 
 int closeNamedPipe(int fd, char * something);
+
+Request * getRequest(Connection * connection);
 
 #endif
