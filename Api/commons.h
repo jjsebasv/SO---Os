@@ -1,6 +1,13 @@
 #ifndef _COMMONS_H_
 #define _COMMONS_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netdb.h>
+
 typedef enum { HELP,
 				ADD_STUDENT,
 				UPDATE_STUDENT,
@@ -34,5 +41,8 @@ typedef union Connection {
 Connection* openConnection (void);
 
 void monitorConnection(Connection * connection, fd_set* set);
+
+int requestServer(Connection * connection, int action, size_t dataSize, void * data);
+int getResponse(Connection * connection);
 
 #endif

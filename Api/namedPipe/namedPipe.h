@@ -20,8 +20,6 @@
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
-int requestServer(Connection * connection, int action, size_t dataSize, void * data);
-
 Request * createRequest(int action, int fd, size_t dataSize, void * data);
 
 Connection * createConnection(int fd);
