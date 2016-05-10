@@ -17,13 +17,13 @@ void apiAddStudent (char * name, double average) {
 	//printf("Student->Name: %s\n", student->name);
 	//printf("Student->average: %f\n", student->average);
 	requestServer(connection, ADD_STUDENT, sizeof(student), student);
+	printf("getRespose from api fd: %d\n", connection->np->fd);
 	getResponse(connection);
 }
 
 void apiDeleteStudent (char * name) {
-	Request *request = malloc(sizeof(Request));
+	//Request *request = malloc(sizeof(Request));
 	//request = createRequest(DELETE_STUDENT, sizeof(*(name)), name);
-	sendRequest(request);
 }
 
 void apiUpdateStudent (char * currentName, char * newName, double average) {
