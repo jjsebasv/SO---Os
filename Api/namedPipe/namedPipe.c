@@ -77,19 +77,17 @@ int closeNamedPipe(int fd, char * something) {
 }
 
 //TODO We should redo this function. it doesn't work for structures of different sizes
-// Request * getRequest(Connection * connection) {
-//   int aux_err;
-//   int fd = 0;
-//   //TODO open pipe with its name and start reading from it
+Request * getRequest(Connection * connection) {
+  int aux_err;
+  Request * request;
+  int fd = connection -> np -> fd;
 
-//   // NAME is the named pipe name from where to read - should be a string
-//   fd = open(REQUEST_QUEUE, O_READONLY);
-//   request = (Request *)malloc(sizeof(Request));
-//   aux_err = read( fd, request, sizeof( Request ) );
-//   if ( aux_err )
-//     return ERROR;
-//   return NOT_FOUND_ERR; // return NULL
-// }
+  request = createRequest (int action, int fd, size_t dataSize, void * data);
+  aux_err = read( fd, request, sizeof( Request ) );
+  if ( aux_err )
+    return ERROR;
+  return NOT_FOUND_ERR; // return NULL
+}
 
 
 int getResponse(Connection * connection) {

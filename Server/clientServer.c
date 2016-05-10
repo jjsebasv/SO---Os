@@ -32,7 +32,7 @@ int main (int argc, char const *argv[]){
 
 		if( select(1, &set, NULL, NULL, &tv) > 0){
 
-			//r = getRequest(c);
+			r = getRequest(c);
 			if( r != NULL ){
 				// TODO processRequest(r);
 			}
