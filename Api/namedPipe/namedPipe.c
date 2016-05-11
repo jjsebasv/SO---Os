@@ -8,8 +8,7 @@
 #include "../request.h"
 
 Connection * createConnection(int fd){
-  printf("create connection\n");
-  printf("fd %d\n", fd);
+  printf("START - createConnection | fd: %d\n", fd);
   Connection * connection;
   
   connection = malloc(sizeof(Connection));
@@ -17,11 +16,12 @@ Connection * createConnection(int fd){
 
   connection -> np -> fd = fd;
 
+  printf("END - createConnection\n");
   return connection;
 }
 
 int * openNamedPipe(char * something) {
-  printf("openNamedPipe\n");
+  printf("START - openNamedPipe\n");
   char origin[] = "/tmp/";
   char myfifo[80];
   int * fd;
@@ -31,12 +31,10 @@ int * openNamedPipe(char * something) {
   strcat(myfifo,something);
   mkfifo(myfifo, 0666);
 
-  // no estamos validando que open devuelva -1 no?
-  // llamada recursiva?
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
   fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
   fd[1] = open(myfifo, O_WRONLY);
-  printf("Me voy de openNamedPipe\n");
+  printf("END - openNamedPipe\n");
   return fd;
 }
 
@@ -46,33 +44,36 @@ void writeNamedPipe(int fd, void * data, int size) {
 
 requestState writeRequest(Request * request, int fd) {
 
-  printf("writeRequest\n");
+  printf("START - writeRequest\n");
   writeNamedPipe(fd, &request -> action, sizeof(request -> action));
   writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
   writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
   writeNamedPipe(fd, &request -> connection -> np -> data, request -> connection -> np -> dataSize);
-  printf("me voy de writeRequest\n");
+  printf("END - writeRequest\n");
   return REQUEST_OK;
 }
 
 int readNamedPipe (int fd, char * buffer) {
-  printf("ReadNamedPipe\n");
+  printf("START - readNamedPipe\n");
   buffer = malloc(BLOCK * sizeof(char));
   int q = 0;
   q = read(fd, buffer, BLOCK);
+  // Se queda aca esperando a que lea del named pipe
   if (q > 0)
     buffer = (char *) realloc(buffer, q);
+  printf("END - readNamedPipe\n");
   return q;
 }
 
 int closeNamedPipe(int fd, char * something) {
-  printf("closeNamedPipe\n");
+  printf("START - closeNamedPipe\n");
   char origin[] = "/tmp/";
   char * myfifo = strcat(origin,something);
 
   close(fd);
   unlink(myfifo);
 
+  printf("END - closeNamedPipe\n");
   return 0;
 }
 
@@ -93,16 +94,15 @@ int closeNamedPipe(int fd, char * something) {
 
 
 int getResponse(Connection * connection) {
-  printf("getResponse\n");
+  printf("START - getResponse\n");
   int aux_err = 0;
   int fd = connection->np->fd;
-  printf("fd: %d\n", fd);
   aux_err = readNamedPipe(fd, connection -> np->data);
   closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
     return ERROR;
   connection -> np -> dataSize = aux_err;
-  printf("me voy de getResponse\n");
+  printf("END - getResponse | fd: %d\n", fd);
   return NOT_FOUND_ERR; // return NULL
 }
 
@@ -115,7 +115,7 @@ Connection* openConnection (void){
 
 //TODO CHECK LATER: FIRST ARGUMENT SHOULD IT BE Connection **?
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
-  printf("Request server\n");
+  printf("START - Request server\n");
   Request * request;
   Connection * c;
   // REDO WITHOUT NAME PIPES
@@ -128,7 +128,6 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 
   request = createRequest(action, fd[1], dataSize, data);
   c = createConnection(fd[0]);
-  printf("requestServer fd: %d\n", c->np->fd);
 
   if(request == NULL){
     return FAILED_ON_CREATE_REQUEST;                          
@@ -143,7 +142,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   NPfd = openNamedPipe(REQUEST_QUEUE); //TODO check failure
   writeRequest(request, NPfd[1]);
 
-  printf("Me voy de requestServer\n");
+  printf("END - requestServer | fd: %d\n", connection->np->fd);
   return SUCCESS; 
 }
 
