@@ -4,13 +4,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
-#include "namedPipe.h" 
+#include "namedPipe.h"
 #include "../request.h"
 
 Connection * createConnection(int fd){
   printf("START - createConnection | fd: %d\n", fd);
   Connection * connection;
-  
+
   connection = malloc(sizeof(Connection));
   connection -> np = malloc(sizeof(NPConnection));
 
@@ -26,7 +26,7 @@ int * openNamedPipe(char * something) {
   char myfifo[80];
   int * fd;
   fd = malloc(sizeof(int)*2);
-  
+
   strcpy(myfifo,origin);
   strcat(myfifo,something);
   mkfifo(myfifo, 0666);
@@ -87,8 +87,8 @@ Request * getRequest(Connection * connection) {
   aux_err = read( fd, request, sizeof( Request ) );
   printf("aux_err\n");
 
-  // if ( aux_err )
-  //   return ERROR;
+  if ( aux_err )
+    return NULL;
   // return NOT_FOUND_ERR; // return NULL
   printf("END - getRequest\n");
   return request;
@@ -113,7 +113,7 @@ Connection* openConnection (void){
   Connection * connection;
   int* fd = openNamedPipe (REQUEST_QUEUE);
   connection = createConnection(fd[0]);
-  return connection; 
+  return connection;
 }
 
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
@@ -135,9 +135,9 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   request = createRequest(action, fd[0], dataSize, data);
 
   if(request == NULL || request->connection == NULL){
-    return FAILED_ON_CREATE_REQUEST;                          
+    return FAILED_ON_CREATE_REQUEST;
   }
-  
+
   // estos fd son para la queue
   // fd[1] write
   // fd[0] read
@@ -146,7 +146,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 
   writeRequest(request, NPfd[1]);
   printf("END - requestServer\n");
-  return SUCCESS; 
+  return SUCCESS;
 }
 
 

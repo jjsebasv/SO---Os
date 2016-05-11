@@ -8,7 +8,6 @@
 #include "../Api/commons.h"
 #include "../Api/request.h"
 
-
 int main (int argc, char const *argv[]){
 
 	fd_set set;  	//fds to monitor
