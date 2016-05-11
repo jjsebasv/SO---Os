@@ -40,11 +40,12 @@ int * openNamedPipe(char * something) {
 
 void writeNamedPipe(int fd, void * data, int size) {
   write(fd, data, size);
+  // printf("caracteres escritos %d\n", w);
 }
 
 requestState writeRequest(Request * request, int fd) {
   printf("START - writeRequest\n");
-  printf("FD %d\n", fd);
+  printf("Escribo la request en el FD %d\n", fd);
   writeNamedPipe(fd, &request -> action, sizeof(request -> action));
   writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
   writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
@@ -98,6 +99,7 @@ int getResponse(Connection * connection) {
   printf("START - getResponse\n");
   int aux_err = 0;
   int fd = connection->np->fd;
+  printf("tu vieja\n");
   aux_err = readNamedPipe(fd, connection -> np->data);
   closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
@@ -114,11 +116,10 @@ Connection* openConnection (void){
   return connection; 
 }
 
-//TODO CHECK LATER: FIRST ARGUMENT SHOULD IT BE Connection **?
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
   printf("START - Request server\n");
   Request * request;
-  Connection * c;
+
   // REDO WITHOUT NAME PIPES
   int fd[2];
   int* NPfd;
@@ -127,42 +128,40 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
     return -1;
   }
 
-  printf("fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
-  request = createRequest(action, fd[1], dataSize, data);
-  c = createConnection(fd[0]);
+  // estos fd son para la respuesta
+  // fd[1] write
+  // fd[0] read
+  printf("Estos son los fd de RTA fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
+  request = createRequest(action, fd[0], dataSize, data);
 
-  if(request == NULL){
+  if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;                          
   }
   
-  if(c == NULL){
-    return ERROR_OPEN_REQUEST_QUEUE;
-  }
+  // estos fd son para la queue
+  // fd[1] write
+  // fd[0] read
+  NPfd = openNamedPipe(REQUEST_QUEUE);
+  printf("Estos son los fd de la queue NPfd[0]: %d y NPfd[1]: %d\n", NPfd[0], NPfd[1]);
 
-  *connection = *c;
-
-  NPfd = openNamedPipe(REQUEST_QUEUE); //TODO check failure
-  printf("NPfd[0]: %d y NPfd[1]: %d\n", NPfd[0], NPfd[1]);
   writeRequest(request, NPfd[1]);
-
   printf("END - requestServer\n");
   return SUCCESS; 
 }
 
 
-//TODO malloc check fails
 Request * createRequest(int action, int fd, size_t dataSize, void * data){
-  Request * request;
-
-  request = malloc(sizeof(Request));
-  request -> connection = malloc (sizeof(Connection));
-  request -> connection -> np = malloc (sizeof(NPConnection)); 
+  Request *request = malloc(sizeof(Request));
+  Connection *connection = malloc (sizeof(Connection));;
+  NPConnection *npConnection = malloc (sizeof(NPConnection));
 
   request -> action = action;
+  request -> connection = connection;
+  request -> connection -> np = npConnection;
+
   request -> connection -> np -> fd = fd;
   request -> connection -> np -> dataSize = dataSize;
   request -> connection -> np -> data = data;
-
   return request;
 }
 

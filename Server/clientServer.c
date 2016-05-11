@@ -32,15 +32,25 @@ int main (int argc, char const *argv[]){
 	while(1){
 
 		int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
-		printf("fdCount: %d\n", fdCount);
+		printf("Return del select: %d\n", fdCount);
+		time_t timer;
+		char buffer[26];
+		struct tm* tm_info;
+		time(&timer);
+		tm_info = localtime(&timer);
+		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+		printf("New request at: %s\n", buffer);
+
 		if( fdCount > 0){
 
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
 				// TODO processRequest(r);
 			}
+		} else if ( fdCount == -1 ){
+			printf("Error\n");
 		} else {
-			printf("No requests to process\n");
+			printf("No requests to process at %s\n", buffer);
 		}
 	}
 	return 0;
