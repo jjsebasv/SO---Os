@@ -99,7 +99,6 @@ int getResponse(Connection * connection) {
   printf("START - getResponse\n");
   int aux_err = 0;
   int fd = connection->np->fd;
-  printf("tu vieja\n");
   aux_err = readNamedPipe(fd, connection -> np->data);
   closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
@@ -132,7 +131,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   // fd[1] write
   // fd[0] read
   printf("Estos son los fd de RTA fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
-  request = createRequest(action, fd[0], dataSize, data);
+  request = createRequest(action, fd[0], dataSize, data, connection);
 
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;                          
@@ -150,9 +149,8 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 }
 
 
-Request * createRequest(int action, int fd, size_t dataSize, void * data){
+Request * createRequest(int action, int fd, size_t dataSize, void * data, Connection * connection) {
   Request *request = malloc(sizeof(Request));
-  Connection *connection = malloc (sizeof(Connection));;
   NPConnection *npConnection = malloc (sizeof(NPConnection));
 
   request -> action = action;
