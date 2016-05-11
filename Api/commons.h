@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <netdb.h>
 
+#define NOT_FOUND ((void*)0)
+
 typedef enum { HELP,
 				ADD_STUDENT,
 				UPDATE_STUDENT,
