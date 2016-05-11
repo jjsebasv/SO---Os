@@ -22,16 +22,17 @@ int main (int argc, char const *argv[]){
 	}
 
 	printf("fd connection %d\n", c->np->fd);
-	//sets up the fds to monitor
-	monitorConnection(c, &set);
 
-	//waits 2 seconds
-	tv.tv_sec = 2;
-  	tv.tv_usec = 0;
 
-	while(1){
+	while(1) {
+		//waits 2 seconds
+		tv.tv_sec = 5;
+		tv.tv_usec = 0;
 
-		int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
+		//sets up the fds to monitor
+		monitorConnection(c, &set);
+
+		int fdCount = select(1, &set, NULL, NULL, &tv);
 		printf("Return del select: %d\n", fdCount);
 		time_t timer;
 		char buffer[26];
@@ -42,7 +43,7 @@ int main (int argc, char const *argv[]){
 		printf("New request at: %s\n", buffer);
 
 		if( fdCount > 0){
-
+			printf("entro aca ****** \n");
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
 				// TODO processRequest(r);

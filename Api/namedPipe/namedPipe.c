@@ -7,6 +7,24 @@
 #include "namedPipe.h"
 #include "../request.h"
 
+int * openNamedPipe(char * something) {
+  printf("START - openNamedPipe\n");
+  char origin[] = "/tmp/";
+  char myfifo[80];
+  int * fd;
+  fd = malloc(sizeof(int)*2);
+
+  strcpy(myfifo,origin);
+  strcat(myfifo,something);
+  mkfifo(myfifo, 0666);
+
+  fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
+  fd[1] = open(myfifo, O_WRONLY);
+  fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
+  printf("END - openNamedPipe\n");
+  return fd;
+}
+
 Connection * createConnection(int fd){
   printf("START - createConnection | fd: %d\n", fd);
   Connection * connection;
@@ -20,22 +38,12 @@ Connection * createConnection(int fd){
   return connection;
 }
 
-int * openNamedPipe(char * something) {
-  printf("START - openNamedPipe\n");
-  char origin[] = "/tmp/";
-  char myfifo[80];
-  int * fd;
-  fd = malloc(sizeof(int)*2);
-
-  strcpy(myfifo,origin);
-  strcat(myfifo,something);
-  mkfifo(myfifo, 0666);
-
-  fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
-  fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
-  fd[1] = open(myfifo, O_WRONLY);
-  printf("END - openNamedPipe\n");
-  return fd;
+Connection* openConnection(void) {
+  Connection * connection;
+  int* fd = openNamedPipe(REQUEST_QUEUE);
+  // change here to set where the server reads ******
+  connection = createConnection(fd[0]);
+  return connection;
 }
 
 void writeNamedPipe(int fd, void * data, int size) {
@@ -84,8 +92,8 @@ Request * getRequest(Connection * connection) {
   int fd = 0;
   fd = open(REQUEST_QUEUE, O_READONLY);
   Request *request = malloc(sizeof(Request));
-  aux_err = read( fd, request, sizeof( Request ) );
-  printf("aux_err\n");
+  aux_err = read( connection->np->fd, request, sizeof( Request ) );
+  printf("cn -- %d [fd is %d]\n", aux_err, fd);
 
   if ( aux_err )
     return NULL;
@@ -106,13 +114,6 @@ int getResponse(Connection * connection) {
   connection -> np -> dataSize = aux_err;
   printf("END - getResponse | fd: %d\n", fd);
   return NOT_FOUND_ERR; // return NULL
-}
-
-Connection* openConnection (void){
-  Connection * connection;
-  int* fd = openNamedPipe (REQUEST_QUEUE);
-  connection = createConnection(fd[0]);
-  return connection;
 }
 
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
@@ -143,6 +144,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   NPfd = openNamedPipe(REQUEST_QUEUE);
   printf("Estos son los fd de la queue NPfd[0]: %d y NPfd[1]: %d\n", NPfd[0], NPfd[1]);
 
+  // change here to set where the client writes ******
   writeRequest(request, NPfd[1]);
   printf("END - requestServer\n");
   return SUCCESS;
@@ -150,6 +152,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 
 
 Request * createRequest(int action, int fd, size_t dataSize, void * data, Connection * connection) {
+  printf("A createRequest llega el siguiente fd %d \n", fd);
   Request *request = malloc(sizeof(Request));
   NPConnection *npConnection = malloc (sizeof(NPConnection));
 
