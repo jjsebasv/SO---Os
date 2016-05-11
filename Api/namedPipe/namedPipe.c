@@ -77,20 +77,21 @@ int closeNamedPipe(int fd, char * something) {
   return 0;
 }
 
-//TODO We should redo this function. it doesn't work for structures of different sizes
-// Request * getRequest(Connection * connection) {
-//   int aux_err;
-//   int fd = 0;
-//   //TODO open pipe with its name and start reading from it
+Request * getRequest(Connection * connection) {
+  printf("START - getRequest\n");
+  int aux_err;
+  int fd = 0;
+  fd = open(REQUEST_QUEUE, O_READONLY);
+  Request *request = malloc(sizeof(Request));
+  aux_err = read( fd, request, sizeof( Request ) );
+  printf("aux_err\n");
 
-//   // NAME is the named pipe name from where to read - should be a string
-//   fd = open(REQUEST_QUEUE, O_READONLY);
-//   request = (Request *)malloc(sizeof(Request));
-//   aux_err = read( fd, request, sizeof( Request ) );
-//   if ( aux_err )
-//     return ERROR;
-//   return NOT_FOUND_ERR; // return NULL
-// }
+  // if ( aux_err )
+  //   return ERROR;
+  // return NOT_FOUND_ERR; // return NULL
+  printf("END - getRequest\n");
+  return request;
+}
 
 
 int getResponse(Connection * connection) {

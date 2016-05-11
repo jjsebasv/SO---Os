@@ -17,10 +17,11 @@ int main (int argc, char const *argv[]){
 
 	// //initialize request queue TODO REDO
 
-	if( (c = openConnection()) == NULL) {
+	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
+	printf("fd connection %d\n", c->np->fd);
 	//sets up the fds to monitor
 	monitorConnection(c, &set);
 
@@ -30,10 +31,10 @@ int main (int argc, char const *argv[]){
 
 	while(1){
 
-		if( select(1, &set, NULL, NULL, &tv) > 0){
+		if( select(1, &set, NOT_FOUND, NOT_FOUND, &tv) > 0){
 
-			//r = getRequest(c);
-			if( r != NULL ){
+			r = getRequest(c);
+			if( r != NOT_FOUND ){
 				// TODO processRequest(r);
 			}
 		} else {
