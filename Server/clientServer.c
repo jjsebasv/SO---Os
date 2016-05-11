@@ -31,7 +31,9 @@ int main (int argc, char const *argv[]){
 
 	while(1){
 
-		if( select(1, &set, NOT_FOUND, NOT_FOUND, &tv) > 0){
+		int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
+		printf("fdCount: %d\n", fdCount);
+		if( fdCount > 0){
 
 			r = getRequest(c);
 			if( r != NOT_FOUND ){

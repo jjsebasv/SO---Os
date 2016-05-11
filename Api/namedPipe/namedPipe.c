@@ -43,8 +43,8 @@ void writeNamedPipe(int fd, void * data, int size) {
 }
 
 requestState writeRequest(Request * request, int fd) {
-
   printf("START - writeRequest\n");
+  printf("FD %d\n", fd);
   writeNamedPipe(fd, &request -> action, sizeof(request -> action));
   writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
   writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
@@ -127,6 +127,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
     return -1;
   }
 
+  printf("fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
   request = createRequest(action, fd[1], dataSize, data);
   c = createConnection(fd[0]);
 
@@ -141,9 +142,10 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   *connection = *c;
 
   NPfd = openNamedPipe(REQUEST_QUEUE); //TODO check failure
+  printf("NPfd[0]: %d y NPfd[1]: %d\n", NPfd[0], NPfd[1]);
   writeRequest(request, NPfd[1]);
 
-  printf("END - requestServer | fd: %d\n", connection->np->fd);
+  printf("END - requestServer\n");
   return SUCCESS; 
 }
 
