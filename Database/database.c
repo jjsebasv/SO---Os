@@ -168,7 +168,8 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
   char *err_msg = 0;
 
   // Maybe we should use this
-  // printf("%s\n", SQL_UPDATE_STUDENT(currentName, newName, average));
+  char mynameis[4] = "lala";
+  printf("%s\n", SQL_UPDATE_STUDENT(mynameis, newName, average));
 
   char sql[200] = "UPDATE Students SET Name='";
   strcat(sql, newName);
