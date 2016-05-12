@@ -8,6 +8,8 @@
 #define ADD_STUDENT_HELP "(1) Add a new student\n"
 #define UPDATE_STUDENT_HELP "(2) Update a student\n"
 #define DELETE_STUDENT_HELP "(3) Delete a student\n"
+#define READ_STUDENTS_HELP "(4) Read students\n"
+#define DROP_STUDENTS_TABLE_HELP "(5) Drop students table\n"
 #define STUDENT_NAME_MESSAGE "Student name:\t"
 #define STUDENT_AVERAGE_MESSAGE "Student average:\t"
 #define STUDENT_CURRENT_NAME_MESSAGE "Current student name:\t"
@@ -25,24 +27,25 @@ static void addStudent () {
 	char name[MAX_NAME_CHARACTERS];
 	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , name);
-
 	printf("%s", STUDENT_AVERAGE_MESSAGE);
 	double average;
 	scanf("%lf",&average);
-
 	char averageArr[5];
 	sprintf(averageArr, "%g", average);
-	printf("mira aca --> %s\n", averageArr);
-	writeDatabase(name, averageArr);
 
-	apiAddStudent(name, average);
+	// Replace DbAddStudent with apiAddStudent
+	// apiAddStudent(name, average);
+	DbAddStudent(name, averageArr);
 }
 
 static void deleteStudent () {
 	char name[MAX_NAME_CHARACTERS];
 	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , name);
-	apiDeleteStudent(name);
+
+	// Replace DbDeleteStudent with apiDeleteStudent
+	//apiDeleteStudent(name);
+	DbDeleteStudent(name);
 }
 
 static void updateStudent () {
@@ -58,36 +61,38 @@ static void updateStudent () {
 	printf("%s", STUDENT_AVERAGE_MESSAGE);
 	double average;
 	scanf("%lf",&average);
+	char averageArr[5];
+	sprintf(averageArr, "%g", average);
 
-	apiUpdateStudent(currentName, newName, average);
+	// Replace DbUpdateStudent with apiUpdateStudent
+	// apiUpdateStudent(currentName, newName, average);
+	DbUpdateStudent (currentName, newName, averageArr);
 }
 
 static void help () {
 	printf("%s", ADD_STUDENT_HELP);
 	printf("%s", UPDATE_STUDENT_HELP);
 	printf("%s", DELETE_STUDENT_HELP);
+	printf("%s", READ_STUDENTS_HELP);
+	printf("%s", DROP_STUDENTS_TABLE_HELP);
+}
+
+static void dropTable () {
+	char * tableName = "Students";
+	// Replace DbDropTable with apiDropTable
+	// apiDropTable();
+	DbDropTable(tableName);
+}
+
+static void readStudents () {
+	// Replace DbReadStudents with apiReadStudents
+	// apiReadStudents();
+	DbReadStudents();
 }
 
 static void invalidCommand () {
 	printf("%s\n", INVALID_COMMAND);
 }
-
-// TO DO WITHOUT SWTICH
-
-// int processRequest(Request * r) {
-//   int to_execute = r -> action;
-//   int (*functionChooser[3]) (Request * r);
-
-//   functionChooser[0] = readRequest;
-//   functionChooser[1] = writeRequest;
-//   functionChooser[2] = deleteRequest;
-
-//   if (to_execute != UPDATE_STUDENT && to_execute != ADD_STUDENT && to_execute != DELETE_STUDENT)
-//     return ERROR;
-
-//   return (*functionChooser[to_execute])(r);
-// }
-
 
 static void getCommand (int command) {
 
@@ -105,6 +110,14 @@ static void getCommand (int command) {
 			deleteStudent();
 			break;
 
+		case READ_STUDENTS:
+			readStudents();
+			break;
+
+		case DROP_TABLE:
+			dropTable();
+			break;
+
 		case HELP:
 			help();
 			break;
@@ -114,18 +127,6 @@ static void getCommand (int command) {
 			invalidCommand();
 	}
 }
-
-// Sqlite
-/*
-static int callback(void *NotUsed, int argc, char **argv, char **azColName){
-  int i;
-  for(i=0; i<argc; i++){
-  	printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-  }
-  printf("\n");
-  return 0;
-}
-*/
 
 // MAIN
 

@@ -3,7 +3,7 @@
 
 void sendRequest(Request * request);
 void apiAddStudent (char * name, double average);
-void apiDeleteStudent (char * name);
+void apiDbDeleteStudent (char * name);
 void apiUpdateStudent (char * currentName, char * newName, double average);
 
 #endif
