@@ -14,44 +14,43 @@ int main (int argc, char const *argv[]){
 	Request * r;
 	struct timeval tv;
 	Connection *c;
-
-	// //initialize request queue TODO REDO
+	tv.tv_sec = 2;
+  tv.tv_usec = 0;
 
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
-	printf("fd connection %d\n", c->np->fd);
-	//sets up the fds to monitor
+	printf("fd de la queue %d\n", c->np->fd);
 	monitorConnection(c, &set);
+	r = getRequest(c);
 
-	//waits 2 seconds
-	tv.tv_sec = 2;
-  	tv.tv_usec = 0;
+	// while(1){
 
-	while(1){
+	// 	int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
+	// 	//printf("Return del select: %d\n", fdCount);
+	// 	time_t timer;
+	// 	char buffer[26];
+	// 	struct tm* tm_info;
+	// 	time(&timer);
+	// 	tm_info = localtime(&timer);
+	// 	strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+	// 	printf("New request at: %s\n", buffer);
 
-		int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
-		printf("Return del select: %d\n", fdCount);
-		time_t timer;
-		char buffer[26];
-		struct tm* tm_info;
-		time(&timer);
-		tm_info = localtime(&timer);
-		strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
-		printf("New request at: %s\n", buffer);
+	// 	if( fdCount > 0){
 
-		if( fdCount > 0){
+	// 		r = getRequest(c);
+	// 		if( r != NOT_FOUND ){
+	// 			// TODO processRequest(r);
+	// 		}
+	// 	} else if ( fdCount == -1 ){
+	// 		printf("Error\n");
+	// 	} else {
+	// 		printf("No requests to process at %s\n", buffer);
+	// 	}
 
-			r = getRequest(c);
-			if( r != NOT_FOUND ){
-				// TODO processRequest(r);
-			}
-		} else if ( fdCount == -1 ){
-			printf("Error\n");
-		} else {
-			printf("No requests to process at %s\n", buffer);
-		}
-	}
+	// 	r = getRequest(c);
+	// 	//processRequest(r);
+	// }
 	return 0;
 }
