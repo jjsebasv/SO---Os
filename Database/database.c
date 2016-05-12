@@ -37,7 +37,7 @@ int DbCreateTable(sqlite3* db) {
 
 int DbCeckTableExistance(sqlite3* db) {
   char *err_msg = 0;
-  int rc = sqlite3_exec(db, SELECT_ALL, 0, 0, &err_msg);
+  int rc = sqlite3_exec(db, SQL_SELECT_ALL, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "SQL error: %s\n", err_msg);
@@ -60,11 +60,12 @@ int DbAddStudent(char name[25], char average[5]) {
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("DATABASE ERROR\n");
+    printf("%s\n", DATABASE_ERROR);
     return -1;
   }
 
 	char *err_msg = 0;
+
 
 	char sql[200] = "insert into Students values('";
 	strcat(sql, name);
@@ -98,14 +99,14 @@ int DbReadStudents (){
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("DATABASE ERROR\n");
+    printf("%s\n", DATABASE_ERROR);
     return -1;
   }
 
   char *err_msg = 0;
 
   printf("Name\tAverage\n");
-  rc = sqlite3_exec(db, SELECT_ALL  , printRow, 0, &err_msg);
+  rc = sqlite3_exec(db, SQL_SELECT_ALL  , printRow, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "Failed to select data\n");
@@ -129,7 +130,7 @@ int DbDeleteStudent (char name[25]){
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("DATABASE ERROR\n");
+    printf("%s\n", DATABASE_ERROR);
     return -1;
   }
 
@@ -154,12 +155,44 @@ int DbDeleteStudent (char name[25]){
 }
 
 int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
-  DbDeleteStudent(currentName);
-  DbAddStudent(newName, average);
-  return 0;
-}
+  int rc;
+  sqlite3* db = DbOpen();
+  rc = DbCeckTableExistance(db);
 
-int DbDropDatabase (char databaseName[25]) {
+  if ( db == NULL || rc == -1 ) {
+    sqlite3_close(db);
+    printf("%s\n", DATABASE_ERROR);
+    return -1;
+  }
+
+  char *err_msg = 0;
+
+  // Maybe we should use this
+  char mynameis[4] = "lala";
+  printf("%s\n", SQL_UPDATE_STUDENT(mynameis, newName, average));
+
+  char sql[200] = "UPDATE Students SET Name='";
+  strcat(sql, newName);
+  strcat(sql, APOSTROPHE);
+  strcat(sql, COMMA);
+  strcat(sql, "average='");
+  strcat(sql, average);
+  strcat(sql, APOSTROPHE);
+  strcat(sql, " WHERE Name='");
+  strcat(sql, currentName);
+  strcat(sql, APOSTROPHE);
+  strcat(sql, SEMILCOLON);
+  
+  rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+  if (rc != SQLITE_OK ) {
+    fprintf(stderr, "SQL error: %s\n", err_msg);
+    fprintf(stderr, "SQL error: %d\n", rc);
+    sqlite3_free(err_msg);
+    sqlite3_close(db);
+  }
+
+  sqlite3_close(db);
   return 0;
 }
 
@@ -171,7 +204,7 @@ int DbDropTable (char tableName[25]) {
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("DATABASE ERROR\n");
+    printf("%s\n", DATABASE_ERROR);
     return -1;
   }
   char *err_msg = 0;
@@ -192,7 +225,6 @@ int DbDropTable (char tableName[25]) {
 
   sqlite3_close(db);
   return 0;
-  
 }
 
 
