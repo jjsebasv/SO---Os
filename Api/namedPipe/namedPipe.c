@@ -29,8 +29,9 @@ int * openNamedPipe(char * namedPipeName) {
   int * fd;
   fd = malloc(sizeof(int)*2);
 
-  strcpy(myfifo,origin);
+  strcat(myfifo,origin);
   strcat(myfifo,namedPipeName);
+
   mkfifo(myfifo, 0666);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
@@ -68,7 +69,11 @@ int readNamedPipe (int fd, char * buffer) {
 int closeNamedPipe(int fd, char * something) {
   printf("START - closeNamedPipe\n");
   char origin[] = "/tmp/";
-  char * myfifo = strcat(origin,something);
+  char myfifo[80] = "";
+  strcat(myfifo, origin);
+  strcat(myfifo, something);
+
+  printf("%s\n", myfifo);
 
   close(fd);
   unlink(myfifo);
