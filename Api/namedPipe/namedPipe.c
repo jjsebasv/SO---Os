@@ -80,8 +80,7 @@ int closeNamedPipe(int fd, char * something) {
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
   int aux_err;
-  int fd = 0;
-  fd = open(REQUEST_QUEUE, O_READONLY);
+  int fd = connection -> np -> fd;
   Request *request = malloc(sizeof(Request));
   aux_err = read( fd, request, sizeof( Request ) );
   printf("aux_err\n");

@@ -14,6 +14,7 @@ int main (int argc, char const *argv[]){
 	Request * r;
 	struct timeval tv;
 	Connection *c;
+	fd_set jorge;
 
 	// //initialize request queue TODO REDO
 
@@ -24,19 +25,21 @@ int main (int argc, char const *argv[]){
 	printf("fd connection %d\n", c->np->fd);
 	//sets up the fds to monitor
 	monitorConnection(c, &set);
-
+  FD_ZERO(&jorge);
 	//waits 2 seconds
 	tv.tv_sec = 2;
   	tv.tv_usec = 0;
 
 	while(1){
 
-		int fdCount = select(1, &set, NOT_FOUND, NOT_FOUND, &tv);
+		int fdCount = select(1, &set, &jorge, &jorge, &tv);
+			// tv.tv_sec = 2;
 		printf("fdCount: %d\n", fdCount);
 		if( fdCount > 0){
 
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
+				printf("hodi\n");
 				// TODO processRequest(r);
 			}
 		} else {
