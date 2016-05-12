@@ -25,15 +25,16 @@ int main (int argc, char const *argv[]){
 	printf("fd connection %d\n", c->np->fd);
 	//sets up the fds to monitor
 	monitorConnection(c, &set);
-  FD_ZERO(&jorge);
+ 	FD_ZERO(&jorge);
 	//waits 2 seconds
 	tv.tv_sec = 2;
   	tv.tv_usec = 0;
 
 	while(1){
 
-		int fdCount = select(1, &set, &jorge, &jorge, &tv);
-			// tv.tv_sec = 2;
+		int fdCount = select(c -> np -> fd + 1, &set, NULL, NULL, &tv);
+			tv.tv_sec = 2;
+			monitorConnection(c, &set);
 		printf("fdCount: %d\n", fdCount);
 		if( fdCount > 0){
 
@@ -42,8 +43,10 @@ int main (int argc, char const *argv[]){
 				printf("hodi\n");
 				// TODO processRequest(r);
 			}
-		} else {
+		}if(fdCount == 0) {
 			printf("No requests to process\n");
+		}else{
+			printf("error\n");
 		}
 	}
 	return 0;

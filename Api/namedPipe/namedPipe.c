@@ -29,11 +29,15 @@ int * openNamedPipe(char * something) {
   
   strcpy(myfifo,origin);
   strcat(myfifo,something);
-  mkfifo(myfifo, 0666);
+  mkfifo(myfifo, 0777);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
   fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
   fd[1] = open(myfifo, O_WRONLY);
+
+  printf("fd 0 = %d and fd 1 = %d \n",fd[0],fd[1]);
+
+
   printf("END - openNamedPipe\n");
   return fd;
 }
@@ -79,16 +83,19 @@ int closeNamedPipe(int fd, char * something) {
 
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
-  int aux_err;
-  int fd = connection -> np -> fd;
-  Request *request = malloc(sizeof(Request));
-  aux_err = read( fd, request, sizeof( Request ) );
-  printf("aux_err\n");
+  Request *request; 
+  int action, fd;
+  size_t dataSize;
+  void * data;
+  printf("START - readNamedPipe\n");
+  read(connection -> np -> fd, &action, sizeof(int));
+  read(connection -> np -> fd, &fd, sizeof(int));
+  read(connection -> np -> fd, &dataSize, sizeof(size_t));
+  data = malloc (dataSize);
+  read(connection -> np -> fd, data, dataSize);
+  request = createRequest(action, fd, dataSize, data);
+  printf("END - readNamedPipe\n");
 
-  // if ( aux_err )
-  //   return ERROR;
-  // return NOT_FOUND_ERR; // return NULL
-  printf("END - getRequest\n");
   return request;
 }
 
@@ -119,16 +126,16 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   Request * request;
   Connection * c;
   // REDO WITHOUT NAME PIPES
-  int fd[2];
+  int responseFd[2];
   int* NPfd;
 
-  if( pipe(fd) != 0){
+  if( pipe(responseFd) != 0){
     return -1;
   }
 
-  printf("fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
-  request = createRequest(action, fd[1], dataSize, data);
-  c = createConnection(fd[0]);
+  printf("responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+  request = createRequest(action, responseFd[1], dataSize, data);
+  c = createConnection(responseFd[0]);
 
   if(request == NULL){
     return FAILED_ON_CREATE_REQUEST;                          
