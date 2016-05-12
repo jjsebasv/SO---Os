@@ -1,15 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlite3.h>
+#include "database.h"
 
-#define NO_TABLE 404
-#define USER_EXISTS 19
-#define NO_SESSION NULL
+int printRow(void *NotUsed, int argc, char **argv, char **azColName) {
+  NotUsed = 0;
+  for (int i = 0; i < argc; i=i+2) {
+      printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
+  }
+  printf("\n");
+  return 0;
+}
 
-
-sqlite3* openDatabase(void) {
+sqlite3* DbOpen(void) {
   sqlite3* db;
-  int rc = sqlite3_open("database.db", &db);
+  int rc = sqlite3_open(DATABASE_NAME, &db);
   if (rc != SQLITE_OK) {
     fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
@@ -18,10 +23,9 @@ sqlite3* openDatabase(void) {
   return db;
 }
 
-int createTable(sqlite3* db) {
+int DbCreateTable(sqlite3* db) {
   char *err_msg = 0;
-  char *sql = "CREATE TABLE Students(Name varchar[25] PRIMARY KEY, Average float);";
-  int rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+  int rc = sqlite3_exec(db, SQL_CREATE_TABLE, 0, 0, &err_msg);
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "SQL error: %s\n", err_msg);
     fprintf(stderr, "SQL error: %d\n", rc);
@@ -31,16 +35,16 @@ int createTable(sqlite3* db) {
   return rc;
 }
 
-int checkTableExistance(sqlite3* db) {
+int DbCeckTableExistance(sqlite3* db) {
   char *err_msg = 0;
-  char* sql = "select * from Students;";
-  int rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+  int rc = sqlite3_exec(db, SELECT_ALL, 0, 0, &err_msg);
+
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "SQL error: %s\n", err_msg);
     fprintf(stderr, "SQL error: %d\n", rc);
 
     if ( rc == 1 ) { // No table error
-      rc = createTable(db);
+      rc = DbCreateTable(db);
       if ( rc == -1 )
         sqlite3_close(db);
     }
@@ -48,11 +52,11 @@ int checkTableExistance(sqlite3* db) {
   return rc;
 }
 
-int writeDatabase(char name[25], char average[5]) {
+int DbAddStudent(char name[25], char average[5]) {
 
   int rc;
-  sqlite3* db = openDatabase();
-  rc = checkTableExistance(db);
+  sqlite3* db = DbOpen();
+  rc = DbCeckTableExistance(db);
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
@@ -63,19 +67,20 @@ int writeDatabase(char name[25], char average[5]) {
 	char *err_msg = 0;
 
 	char sql[200] = "insert into Students values('";
-	char* comma = "','";
-	char* last_p = "');";
 	strcat(sql, name);
-	strcat(sql, comma);
+	strcat(sql, COMMA);
 	strcat(sql, average);
-	strcat(sql, last_p);
+	strcat(sql, LAST_P);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if (rc != SQLITE_OK ) {
     if ( rc == USER_EXISTS ) {
-      printf("That user is already registered\n");
-    } else {
+      printf("%s\n", USER_EXISTS_ERROR_MESSAGE);
+    } else if ( rc == MISSING_TABLE ) {
+      DbCreateTable(db);
+    } 
+    else {
       fprintf(stderr, "SQL error: %s\n", err_msg);
       fprintf(stderr, "SQL error: %d\n", rc);
     }
@@ -86,7 +91,110 @@ int writeDatabase(char name[25], char average[5]) {
 	return 0;
 }
 
-// TODO
-// readDatabase
-// deleteFromDatabase
-// updateDatabase
+int DbReadStudents (){
+  int rc;
+  sqlite3* db = DbOpen();
+  rc = DbCeckTableExistance(db);
+
+  if ( db == NULL || rc == -1 ) {
+    sqlite3_close(db);
+    printf("DATABASE ERROR\n");
+    return -1;
+  }
+
+  char *err_msg = 0;
+
+  printf("Name\tAverage\n");
+  rc = sqlite3_exec(db, SELECT_ALL  , printRow, 0, &err_msg);
+
+  if (rc != SQLITE_OK ) {
+    fprintf(stderr, "Failed to select data\n");
+    fprintf(stderr, "SQL error: %s\n", err_msg);
+
+    sqlite3_free(err_msg);
+    sqlite3_close(db);
+    
+    return 1;
+  } 
+  
+  sqlite3_close(db);
+  return 0;
+}
+
+int DbDeleteStudent (char name[25]){
+
+  int rc;
+  sqlite3* db = DbOpen();
+  rc = DbCeckTableExistance(db);
+
+  if ( db == NULL || rc == -1 ) {
+    sqlite3_close(db);
+    printf("DATABASE ERROR\n");
+    return -1;
+  }
+
+  char *err_msg = 0;
+
+  char sql[200] = "DELETE FROM Students where Name='";
+  strcat(sql, name);
+  strcat(sql, APOSTROPHE);
+  strcat(sql, SEMILCOLON);
+  
+  rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+  if (rc != SQLITE_OK ) {
+    fprintf(stderr, "SQL error: %s\n", err_msg);
+    fprintf(stderr, "SQL error: %d\n", rc);
+    sqlite3_free(err_msg);
+    sqlite3_close(db);
+  }
+
+  sqlite3_close(db);
+  return 0;
+}
+
+int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
+  DbDeleteStudent(currentName);
+  DbAddStudent(newName, average);
+  return 0;
+}
+
+int DbDropDatabase (char databaseName[25]) {
+  return 0;
+}
+
+int DbDropTable (char tableName[25]) {
+
+  int rc;
+  sqlite3* db = DbOpen();
+  rc = DbCeckTableExistance(db);
+
+  if ( db == NULL || rc == -1 ) {
+    sqlite3_close(db);
+    printf("DATABASE ERROR\n");
+    return -1;
+  }
+  char *err_msg = 0;
+
+  char sql[200] = "DROP TABLE '";
+  strcat(sql, tableName);
+  strcat(sql, APOSTROPHE);
+  strcat(sql, SEMILCOLON);
+
+  rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+  if (rc != SQLITE_OK ) {
+    fprintf(stderr, "SQL error: %s\n", err_msg);
+    fprintf(stderr, "SQL error: %d\n", rc);
+    sqlite3_free(err_msg);
+    sqlite3_close(db);
+  }
+
+  sqlite3_close(db);
+  return 0;
+  
+}
+
+
+
+
