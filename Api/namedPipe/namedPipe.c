@@ -35,27 +35,6 @@ int * openNamedPipe(char * something) {
   return fd;
 }
 
-Connection * createConnection(int fd){
-  printf("START - createConnection | fd: %d\n", fd);
-  Connection * connection;
-
-  connection = malloc(sizeof(Connection));
-  connection -> np = malloc(sizeof(NPConnection));
-
-  connection -> np -> fd = fd;
-
-  printf("END - createConnection\n");
-  return connection;
-}
-
-Connection* openConnection(void) {
-  Connection * connection;
-  int* fd = openNamedPipe(REQUEST_QUEUE);
-  // change here to set where the server reads ******
-  connection = createConnection(fd[0]);
-  return connection;
-}
-
 void writeNamedPipe(int fd, void * data, int size) {
   int w = write(fd, data, size);
   printf("caracteres escritos %d\n", w);
@@ -128,6 +107,7 @@ Connection* openConnection (void){
   printf("START - openConnection\n");
   Connection * connection;
   int* fd = openNamedPipe(REQUEST_QUEUE);
+  // change here to set where the server reads ******
   connection = createConnection(fd[0]);
   printf("END - openConnection\n");
   return connection;
@@ -147,9 +127,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   // estos fd son para la respuesta
   // fd[1] write
   // fd[0] read
-  printf("Estos son los fd de RTA fd[0]: %d y fd[1]: %d\n", fd[0], fd[1]);
-  request = createRequest(action, fd[0], dataSize, data, connection);
-
+  
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
   }

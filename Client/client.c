@@ -2,6 +2,7 @@
 
 #include "../Api/commons.h"
 #include "../Api/request.h"
+#include "../Database/database.h"
 #include "client.h"
 
 #define ADD_STUDENT_HELP "(1) Add a new student\n"
@@ -28,6 +29,11 @@ static void addStudent () {
 	printf("%s", STUDENT_AVERAGE_MESSAGE);
 	double average;
 	scanf("%lf",&average);
+
+	char averageArr[5];
+	sprintf(averageArr, "%g", average);
+	printf("mira aca --> %s\n", averageArr);
+	writeDatabase(name, averageArr);
 
 	apiAddStudent(name, average);
 }
@@ -99,7 +105,7 @@ static void getCommand (int command) {
 			deleteStudent();
 			break;
 
-		case HELP: 
+		case HELP:
 			help();
 			break;
 
@@ -108,6 +114,20 @@ static void getCommand (int command) {
 			invalidCommand();
 	}
 }
+
+// Sqlite
+/*
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+  int i;
+  for(i=0; i<argc; i++){
+  	printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+  }
+  printf("\n");
+  return 0;
+}
+*/
+
+// MAIN
 
 int main() {
 	int command;
