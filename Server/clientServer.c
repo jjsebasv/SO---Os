@@ -14,13 +14,14 @@ int main (int argc, char const *argv[]){
 	Request * r;
 	struct timeval tv;
 	Connection *c;
-
-	// //initialize request queue TODO REDO
+	tv.tv_sec = 2;
+  tv.tv_usec = 0;
 
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
+/*
 	printf("fd connection %d\n", c->np->fd);
 
 
@@ -54,5 +55,12 @@ int main (int argc, char const *argv[]){
 			printf("No requests to process at %s\n", buffer);
 		}
 	}
+*/
+
+	printf("fd de la queue %d\n", c->np->fd);
+	monitorConnection(c, &set);
+	r = getRequest(c);
+
+
 	return 0;
 }
