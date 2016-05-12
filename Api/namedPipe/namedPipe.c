@@ -17,7 +17,12 @@ Connection * createConnection(int fd){
   return connection;
 }
 
-int * openNamedPipe(char * something) {
+/**
+ *  Returns two fds for the namedPipeName
+ *
+ *  @param  namedPipeName name of the pipe
+ */
+int * openNamedPipe(char * namedPipeName) {
   //printf("START - openNamedPipe\n");
   char origin[] = "/tmp/";
   char myfifo[80];
@@ -25,7 +30,7 @@ int * openNamedPipe(char * something) {
   fd = malloc(sizeof(int)*2);
 
   strcpy(myfifo,origin);
-  strcat(myfifo,something);
+  strcat(myfifo,namedPipeName);
   mkfifo(myfifo, 0666);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
@@ -131,21 +136,11 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
   }
-/*
-  // estos fd son para la queue
-  // fd[1] write
-  // fd[0] read
-  NPfd = openNamedPipe(REQUEST_QUEUE);
-  printf("Estos son los fd de la queue NPfd[0]: %d y NPfd[1]: %d\n", NPfd[0], NPfd[1]);
-
-  // change here to set where the client writes ******
-  writeRequest(request, NPfd[1]);
-  printf("END - requestServer\n");
-*/
   printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
   printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
+  closeNamedPipe(queueFd[1],  REQUEST_QUEUE);
   //printf("END - requestServer\n");
   return SUCCESS;
 }

@@ -10,7 +10,7 @@
 #define USER_EXISTS 19
 #define NO_SESSION NULL
 #define COMMA ","
-#define LAST_P "');"
+#define LAST_P ");"
 #define SEMILCOLON ";"
 #define APOSTROPHE "'"
 #define SQL_SELECT_ALL "select * from Students;"

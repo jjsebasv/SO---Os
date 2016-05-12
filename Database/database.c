@@ -43,10 +43,8 @@ int DbCeckTableExistance(sqlite3* db) {
     fprintf(stderr, "SQL error: %s\n", err_msg);
     fprintf(stderr, "SQL error: %d\n", rc);
 
-    if ( rc == 1 ) { // No table error
-      rc = DbCreateTable(db);
-      if ( rc == -1 )
-        sqlite3_close(db);
+    if ( rc == -1 ) {
+      sqlite3_close(db);
     }
   }
   return rc;
@@ -69,17 +67,18 @@ int DbAddStudent(char name[25], char average[5]) {
 
 	char sql[200] = "insert into Students values('";
 	strcat(sql, name);
+  strcat(sql, APOSTROPHE);
 	strcat(sql, COMMA);
 	strcat(sql, average);
 	strcat(sql, LAST_P);
+
+  printf("%s\n", sql);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if (rc != SQLITE_OK ) {
     if ( rc == USER_EXISTS ) {
       printf("%s\n", USER_EXISTS_ERROR_MESSAGE);
-    } else if ( rc == MISSING_TABLE ) {
-      DbCreateTable(db);
     } 
     else {
       fprintf(stderr, "SQL error: %s\n", err_msg);
@@ -168,8 +167,7 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
   char *err_msg = 0;
 
   // Maybe we should use this
-  char mynameis[4] = "lala";
-  printf("%s\n", SQL_UPDATE_STUDENT(mynameis, newName, average));
+  // printf("%s\n", SQL_UPDATE_STUDENT(mynameis, newName, average));
 
   char sql[200] = "UPDATE Students SET Name='";
   strcat(sql, newName);

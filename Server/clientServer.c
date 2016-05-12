@@ -21,7 +21,7 @@ int main (int argc, char const *argv[]){
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 
-/*
+
 	printf("fd connection %d\n", c->np->fd);
 
 
@@ -55,12 +55,6 @@ int main (int argc, char const *argv[]){
 			printf("No requests to process at %s\n", buffer);
 		}
 	}
-*/
-
-	printf("fd de la queue %d\n", c->np->fd);
-	monitorConnection(c, &set);
-	r = getRequest(c);
-
 
 	return 0;
 }

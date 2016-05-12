@@ -1,10 +1,4 @@
 TODO
 
-> sqlite?
-> funcion getRequest en clientServer.c - CHECK THIS
-> funcion processRequest en clientServer.c - CHECK THIS
-> readRequest(r)
-> writeRequest(r)
-
 > Vamo a calmarno
 > Vamo a codear

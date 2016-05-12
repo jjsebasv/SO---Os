@@ -10,14 +10,13 @@
 // OPTION 1
 void apiAddStudent (char * name, double average) {
 	Student *student = malloc(sizeof(Student));
-
+	Connection *connection = malloc(sizeof(Connection));
 	student->name = name;
 	student->average = average;
 	//printf("Student->Name: %s\n", student->name);
 	//printf("Student->average: %f\n", student->average);
-	//requestServer(connection, ADD_STUDENT, sizeof(student), student);
-	//getResponse(connection);
-
+	requestServer(connection, ADD_STUDENT, sizeof(student), student);
+	getResponse(connection);
 }
 
 // OPTION 3
