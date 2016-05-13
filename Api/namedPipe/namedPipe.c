@@ -30,7 +30,7 @@ int * openNamedPipe(char * namedPipeName) {
   fd = malloc(sizeof(int)*2);
   
   strcpy(myfifo,origin);
-  strcat(myfifo,something);
+  strcat(myfifo,namedPipeName);
   mkfifo(myfifo, 0777);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
@@ -123,18 +123,20 @@ Connection* openConnection (void){
 }
 
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
-  //printf("START - Request server\n");
   Request * request;
-  Connection * c;
   int responseFd[2];
-  int* NPfd;
+  int* queueFd;
 
   if( pipe(responseFd) != 0){
     return -1;
   }
 
+  printf("responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+  connection = createConnection(responseFd[1]);
   request = createRequest(action, responseFd[1], dataSize, data);
-  c = createConnection(responseFd[0]);
+
+
+  queueFd = openNamedPipe(REQUEST_QUEUE);
 
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
@@ -150,17 +152,12 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 
 
 
-Request * createRequest(int action, int fd, size_t dataSize, void * data, Connection * connection){
-  Request *request = malloc(sizeof(Request));
-  NPConnection *npConnection = malloc (sizeof(NPConnection));
+Request * createRequest(int action, int fd, size_t dataSize, void * data){
+  Connection * connection = createConnection(fd);
 
+  Request *request = malloc(sizeof(Request));
   request -> action = action;
   request -> connection = connection;
-  request -> connection -> np = npConnection;
-
-  request -> connection -> np -> fd = fd;
-  request -> connection -> np -> dataSize = dataSize;
-  request -> connection -> np -> data = data;
   return request;
 }
 

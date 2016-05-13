@@ -20,7 +20,7 @@
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
-Request * createRequest(int action, int fd, size_t dataSize, void * data, Connection * connection);
+Request * createRequest(int action, int fd, size_t dataSize, void * data);
 
 Connection * createConnection(int fd);
 

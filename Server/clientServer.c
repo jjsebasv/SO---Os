@@ -13,7 +13,7 @@ int main (int argc, char const *argv[]){
 	fd_set set;  	//fds to monitor
 	Request * r;
 	struct timeval tv;
-	Connection *c;
+	Connection* c;
 
 	// //initialize request queue TODO REDO
 	if( (c = openConnection()) == NOT_FOUND) {
@@ -23,7 +23,6 @@ int main (int argc, char const *argv[]){
 
 	//sets up the fds to monitor
 	monitorConnection(c, &set);
- 	FD_ZERO(&jorge);
 
 	//waits 2 seconds
 	tv.tv_sec = 2;
@@ -42,7 +41,7 @@ int main (int argc, char const *argv[]){
 		} else if ( fdCount < 0 ){
 			printf("Error\n");
 		} else {
-			printf("No requests to process at %s\n", buffer);
+			printf("No requests to process\n");
 		}
 	}
 
