@@ -46,14 +46,19 @@ void writeNamedPipe(int fd, void * data, int size) {
 }
 
 requestState writeRequest(Request * request, int fd) {
-  //printf("START - writeRequest\n");
-  printf("Escribo la request en el FD %d\n", fd);
-  writeNamedPipe(fd, request, sizeof(request));
-  //printf("END - writeRequest\n");
+  printf("START - writeRequest\n");
+  printf("FD %d\n", fd);
+  printf("size of request %lu \n", sizeof((*request)));
+  // writeNamedPipe(fd, &request -> action, sizeof(request -> action));
+  // writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
+  // writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
+  // writeNamedPipe(fd, &request -> connection -> np -> data, request -> connection -> np -> dataSize);
+  writeNamedPipe(fd, request, sizeof((*request)));
+  printf("END - writeRequest\n");
   return REQUEST_OK;
 }
 
-int readNamedPipe (int fd, char * buffer) {
+int readNamedPipe (int fd, void * buffer) {
   printf("START - readNamedPipe\n");
   buffer = malloc(BLOCK * sizeof(char));
   int q = 0;
@@ -83,21 +88,25 @@ int closeNamedPipe(int fd, char * something) {
 
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
-  Request *request; 
-  int action, fd;
-  size_t dataSize;
-  void * data;
-  printf("START - readNamedPipe\n");
-  read(connection -> np -> fd, &action, sizeof(int));
-  read(connection -> np -> fd, &fd, sizeof(int));
-  read(connection -> np -> fd, &dataSize, sizeof(size_t));
-  data = malloc (dataSize);
-  read(connection -> np -> fd, data, dataSize);
-  request = createRequest(action, fd, dataSize, data);
-  printf("END - readNamedPipe\n");
+  int aux_err;
+  //int fd = 0;
+  //fd = fopen(REQUEST_QUEUE, O_READONLY);
+  printf("EL FD!%d\n", connection -> np-> fd);
+  Request *request = malloc(sizeof(Request));
+  aux_err = readNamedPipe(connection -> np-> fd, request);
+  // aux_err = read( fd, request, sizeof( Request ) );`
+  printf("CARACTERES LEIDOS %d\n", aux_err);
+  printf("Vamo a ver la request\n");
+  printf("request action %d\n", request->action);
+  printf("connection fd %d\n", request->connection->np->fd);
+  printf("connection dataSize %d\n", request->connection->np->dataSize);
+
+  // if ( aux_err )
+  //   return ERROR;
+  // return NOT_FOUND_ERR; // return NULL
+  printf("END - getRequest\n");
   return request;
 }
-
 
 int getResponse(Connection * connection) {
   printf("START - getResponse\n");

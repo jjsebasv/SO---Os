@@ -28,7 +28,7 @@ int * openNamedPipe(char * something);
 
 void writeNamedPipe(int fd, void * data, int size);
 
-int readNamedPipe (int fd, char * buffer);
+int readNamedPipe (int fd, void * buffer);
 
 int closeNamedPipe(int fd, char * something);
 
