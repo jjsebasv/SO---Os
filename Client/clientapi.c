@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "../Api/request.h"
 #include "client.h"
 #include "../Api/commons.h"
 

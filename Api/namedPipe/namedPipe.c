@@ -5,23 +5,16 @@
 #include <unistd.h>
 #include <netdb.h>
 #include "namedPipe.h"
-#include "../request.h"
+#include "../commons.h"
 
 Connection * createConnection(int fd){
-  //printf("START - createConnection\n");
   Connection * connection;
   connection = malloc(sizeof(Connection));
-  connection -> np = malloc(sizeof(NPConnection));
-  connection -> np -> fd = fd;
-  //printf("END - createConnection\n");
+  connection -> fd = fd;
   return connection;
 }
 
-/**
- *  Returns two fds for the namedPipeName
- *
- *  @param  namedPipeName name of the pipe
- */
+
 int * openNamedPipe(char * namedPipeName) {
   //printf("START - openNamedPipe\n");
   char origin[] = "/tmp/";
@@ -48,12 +41,10 @@ void writeNamedPipe(int fd, void * data, int size) {
 requestState writeRequest(Request * request, int fd) {
   printf("START - writeRequest\n");
   printf("FD %d\n", fd);
-  printf("size of request %lu \n", sizeof((*request)));
-  // writeNamedPipe(fd, &request -> action, sizeof(request -> action));
-  // writeNamedPipe(fd, &request -> connection -> np -> fd, sizeof(request -> connection -> np -> fd));
-  // writeNamedPipe(fd, &request -> connection -> np -> dataSize, sizeof(request -> connection -> np -> dataSize));
-  // writeNamedPipe(fd, &request -> connection -> np -> data, request -> connection -> np -> dataSize);
-  writeNamedPipe(fd, request, sizeof((*request)));
+  writeNamedPipe(fd, &request -> action, sizeof(request -> action));
+  writeNamedPipe(fd, &request -> connection -> fd, sizeof(request -> connection -> fd));
+  writeNamedPipe(fd, &request -> connection -> dataSize, sizeof(request -> connection -> dataSize));
+  writeNamedPipe(fd, &request -> connection -> data, request -> connection -> dataSize);
   printf("END - writeRequest\n");
   return REQUEST_OK;
 }
@@ -70,12 +61,12 @@ int readNamedPipe (int fd, void * buffer) {
   return q;
 }
 
-int closeNamedPipe(int fd, char * something) {
+int closeNamedPipe(int fd, char * name) {
   printf("START - closeNamedPipe\n");
   char origin[] = "/tmp/";
   char myfifo[80] = "";
   strcat(myfifo, origin);
-  strcat(myfifo, something);
+  strcat(myfifo, name);
 
   printf("%s\n", myfifo);
 
@@ -88,35 +79,30 @@ int closeNamedPipe(int fd, char * something) {
 
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
-  int aux_err;
-  //int fd = 0;
-  //fd = fopen(REQUEST_QUEUE, O_READONLY);
-  printf("EL FD!%d\n", connection -> np-> fd);
-  Request *request = malloc(sizeof(Request));
-  aux_err = readNamedPipe(connection -> np-> fd, request);
-  // aux_err = read( fd, request, sizeof( Request ) );`
-  printf("CARACTERES LEIDOS %d\n", aux_err);
-  printf("Vamo a ver la request\n");
-  printf("request action %d\n", request->action);
-  printf("connection fd %d\n", request->connection->np->fd);
-  printf("connection dataSize %d\n", request->connection->np->dataSize);
-
-  // if ( aux_err )
-  //   return ERROR;
-  // return NOT_FOUND_ERR; // return NULL
-  printf("END - getRequest\n");
+  Request *request; 
+  int action, fd;
+  size_t dataSize;
+  void * data;
+  printf("START - readNamedPipe\n");
+  read(connection-> fd, &action, sizeof(int));
+  read(connection-> fd, &fd, sizeof(int));
+  read(connection-> fd, &dataSize, sizeof(size_t));
+  data = malloc (dataSize);
+  read(connection-> fd, data, dataSize);
+  request = createRequest(action, fd, dataSize, data);
+  printf("END - readNamedPipe\n");
   return request;
 }
 
 int getResponse(Connection * connection) {
   printf("START - getResponse\n");
   int aux_err = 0;
-  int fd = connection->np->fd;
-  aux_err = readNamedPipe(fd, connection -> np->data);
+  int fd = connection-> fd;
+  aux_err = readNamedPipe(fd, connection-> data);
   closeNamedPipe(fd, REQUEST_QUEUE);
   if ( aux_err )
     return ERROR;
-  connection -> np -> dataSize = aux_err;
+  connection -> dataSize = aux_err;
   printf("END - getResponse | fd: %d\n", fd);
   return NOT_FOUND_ERR; // return NULL
 }
@@ -172,6 +158,6 @@ Request * createRequest(int action, int fd, size_t dataSize, void * data){
 
 void monitorConnection(Connection * connection, fd_set* set){
   FD_ZERO(set);
-  FD_SET(connection -> np -> fd, set);
+  FD_SET(connection -> fd, set);
   return;
 }

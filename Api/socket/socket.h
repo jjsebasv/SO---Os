@@ -1,5 +1,5 @@
-#ifndef _NAMED_PIPE_H_
-#define _NAMED_PIPE_H_
+#ifndef _SOCKET_H_
+#define _SOCKET_H_
 
 // From http://stackoverflow.com/questions/2784500/how-to-send-a-simple-string-between-two-programs-using-pipes
 #include <stdio.h>

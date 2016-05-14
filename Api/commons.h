@@ -19,27 +19,34 @@ typedef enum { HELP,
 				} Action;
 
 typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS, ERROR, NOT_FOUND_ERR, O_READONLY } connectionStates;
+typedef enum {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
 
 typedef struct Student {
   char * name;
   double average;
 } Student;
 
-
-typedef struct NPConnection {
+typedef union Connection {
   int fd;
   int dataSize;
   char* data;
-} NPConnection;
-
-//TODO
-typedef struct SConnection {
-} STConnection;
-
-typedef union Connection {
-	NPConnection * np;
-	STConnection * st;
 } Connection;
+
+
+typedef struct Request {	
+  int action;
+  Connection * connection;
+} Request;
+
+// Write a request in the request queue
+requestState writeRequest(Request * request, int fd);
+
+// Get the first request in the request queue
+Request * getRequest(Connection * connection);
+
+int processRequest(Request * request);
+requestState readRequest(Request request);
+requestState deleteRequest(Request request);
 
 //OPENS REQUEST QUEUE
 Connection* openConnection (void);
