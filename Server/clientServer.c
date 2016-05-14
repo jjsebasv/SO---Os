@@ -9,40 +9,25 @@
 
 int main (int argc, char const *argv[]){
 
-	fd_set set;  	//fds to monitor
+	int listened = 0;
 	Request * r;
-	struct timeval tv;
 	Connection* c;
 
 	// //initialize request queue TODO REDO
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
-	printf("fd connection %d\n", c->fd);
-
-	//sets up the fds to monitor
-	monitorConnection(c, &set);
-
-	//waits 2 seconds
-	tv.tv_sec = 2;
-  	tv.tv_usec = 0;
 
 	while(1) {
-		int fdCount = select(c -> fd + 1, &set, NULL, NULL, &tv);
-		tv.tv_sec = 2;
-		monitorConnection(c, &set);
-		printf("fdCount: %d\n", fdCount);
-		if( fdCount > 0){
+		listened = listenConnectin(c);
+		printf("listened: %d\n", listened);
+		if( listened >=  0){
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
 				// TODO processRequest(r);
 			}
-		} else if ( fdCount < 0 ){
+		} else( listened < 0 ){
 			printf("Error\n");
-		} else {
-			printf("No requests to process\n");
-		}
 	}
-
 	return 0;
 }
