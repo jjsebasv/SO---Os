@@ -162,7 +162,6 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
   request = createRequest(action, responseFd[1], dataSize, data);
   *connection = (*request->connection);
 
-
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
   }
