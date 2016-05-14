@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <netdb.h>
 
+#define MAX_NAME_CHARACTERS 100
 #define NOT_FOUND ((void*)0)
 
 typedef enum { HELP,
@@ -22,14 +23,14 @@ typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_Q
 typedef enum {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} requestState;
 
 typedef struct Student {
-  char * name;
-  char * average;
+  char name[MAX_NAME_CHARACTERS];
+  char average[5];
 } Student;
 
 typedef struct Connection {
   int fd;
   int dataSize;
-  void * data;
+  Student * data;
 } Connection;
 
 

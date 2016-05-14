@@ -75,12 +75,12 @@ requestState writeRequest(Request * request, int fd) {
   //printf("FD %d\n", fd);
   printf("ACTION %d\n", request -> action);
   printf("DATA SIZE %d\n", request -> connection -> dataSize);
-  printf("NAME %s\n", ((Student*)request->connection->data)-> name);
-  printf("AVERAGE %s\n", ((Student*)request->connection->data)->average);
+  printf("NAME %s\n", request->connection->data -> name);
+  printf("AVERAGE %s\n", request->connection->data->average);
   writeNamedPipe(fd, &request -> action, sizeof(int));
   writeNamedPipe(fd, &request -> connection -> fd, sizeof(int));
   writeNamedPipe(fd, &request -> connection -> dataSize, sizeof(int));
-  writeNamedPipe(fd, &request -> connection -> data, request -> connection -> dataSize);
+  writeNamedPipe(fd, request -> connection -> data, request -> connection -> dataSize);
   //printf("END - writeRequest\n");
   return REQUEST_OK;
 }
@@ -113,12 +113,6 @@ int closeNamedPipe(int fd, char * name) {
   printf("END - closeNamedPipe\n");
   return 0;
 }
-
-
-  // writeNamedPipe(fd, &request -> action, sizeof(request -> action));
-  // writeNamedPipe(fd, &request -> connection -> fd, sizeof(request -> connection -> fd));
-  // writeNamedPipe(fd, &request -> connection -> dataSize, sizeof(request -> connection -> dataSize));
-  // writeNamedPipe(fd, &request -> connection -> data, request -> connection -> dataSize);
 
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
