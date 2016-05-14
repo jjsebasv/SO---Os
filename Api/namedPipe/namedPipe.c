@@ -7,6 +7,9 @@
 #include "namedPipe.h"
 #include "../request.h"
 
+// **** CONNECTION ****
+
+// QA seems to be working
 Connection * createConnection(int fd){
   //printf("START - createConnection\n");
   Connection * connection;
@@ -16,6 +19,18 @@ Connection * createConnection(int fd){
   //printf("END - createConnection\n");
   return connection;
 }
+
+Connection* openConnection (void){
+  printf("START - openConnection\n");
+  Connection * connection;
+  int* fd = openNamedPipe(REQUEST_QUEUE);
+  // change here to set where the server reads ******
+  connection = createConnection(fd[0]);
+  printf("END - openConnection\n");
+  return connection;
+}
+
+// **** NAMED PIPE ****
 
 /**
  *  Returns two fds for the namedPipeName
@@ -28,7 +43,7 @@ int * openNamedPipe(char * namedPipeName) {
   char myfifo[80];
   int * fd;
   fd = malloc(sizeof(int)*2);
-  
+
   strcpy(myfifo,origin);
   strcat(myfifo,namedPipeName);
   mkfifo(myfifo, 0777);
@@ -42,7 +57,7 @@ int * openNamedPipe(char * namedPipeName) {
 
 void writeNamedPipe(int fd, void * data, int size) {
   int w = write(fd, data, size);
-  printf("caracteres escritos %d\n", w);
+  printf("caracteres escritos %d desde el fd %d\n", w, fd);
 }
 
 requestState writeRequest(Request * request, int fd) {
@@ -86,6 +101,8 @@ int closeNamedPipe(int fd, char * something) {
   return 0;
 }
 
+// **** REQUEST ****
+
 Request * getRequest(Connection * connection) {
   printf("START - getRequest\n");
   int aux_err;
@@ -98,8 +115,11 @@ Request * getRequest(Connection * connection) {
   printf("CARACTERES LEIDOS %d\n", aux_err);
   printf("Vamo a ver la request\n");
   printf("request action %d\n", request->action);
-  printf("connection fd %d\n", request->connection->np->fd);
-  printf("connection dataSize %d\n", request->connection->np->dataSize);
+
+    // SERVER ERROR request -> connection not working - Segmentation fault
+
+  printf("connection fd %d\n", connection->np->fd);
+  printf("connection dataSize %d\n", connection->np->dataSize);
 
   // if ( aux_err )
   //   return ERROR;
@@ -108,31 +128,17 @@ Request * getRequest(Connection * connection) {
   return request;
 }
 
-int getResponse(Connection * connection) {
-  printf("START - getResponse\n");
-  int aux_err = 0;
-  int fd = connection->np->fd;
-  aux_err = readNamedPipe(fd, connection -> np->data);
-  closeNamedPipe(fd, REQUEST_QUEUE);
-  if ( aux_err )
-    return ERROR;
-  connection -> np -> dataSize = aux_err;
-  printf("END - getResponse | fd: %d\n", fd);
-  return NOT_FOUND_ERR; // return NULL
+// QA - Seems to be working correctly
+Request * createRequest(int action, int fd, size_t dataSize, void * data, Connection * connection){
+  Request *request = malloc(sizeof(Request));
+  request -> action = action;
+  request -> connection = connection;
+  return request;
 }
 
-Connection* openConnection (void){
-  printf("START - openConnection\n");
-  Connection * connection;
-  int* fd = openNamedPipe(REQUEST_QUEUE);
-  // change here to set where the server reads ******
-  connection = createConnection(fd[0]);
-  printf("END - openConnection\n");
-  return connection;
-}
-
-int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
+int requestServer(Connection ** givenConnection, int action, size_t dataSize, void * data) {
   Request * request;
+  Connection * connection = malloc(sizeof(Connection));
   int responseFd[2];
   int* queueFd;
 
@@ -142,8 +148,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 
   printf("responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
   connection = createConnection(responseFd[1]);
-  request = createRequest(action, responseFd[1], dataSize, data);
-
+  request = createRequest(action, responseFd[1], dataSize, data, connection);
 
   queueFd = openNamedPipe(REQUEST_QUEUE);
 
@@ -154,21 +159,28 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
-  closeNamedPipe(queueFd[1],  REQUEST_QUEUE);
+  //closeNamedPipe(queueFd[1],  REQUEST_QUEUE);
+  printf("request gilada %d\n", request -> connection -> np -> fd );
   //printf("END - requestServer\n");
+  *givenConnection = connection;
   return SUCCESS;
 }
 
+// **** RESPONSE ****
 
-
-Request * createRequest(int action, int fd, size_t dataSize, void * data){
-  Connection * connection = createConnection(fd);
-
-  Request *request = malloc(sizeof(Request));
-  request -> action = action;
-  request -> connection = connection;
-  return request;
+int getResponse(Connection * connection) {
+  printf("START - getResponse\n");
+  int aux_err = 0;
+  int fd = connection->np->fd;
+  aux_err = readNamedPipe(fd, connection -> np->data);
+  //closeNamedPipe(fd, REQUEST_QUEUE);
+  if ( aux_err )
+    return ERROR;
+  connection -> np -> dataSize = aux_err;
+  printf("END - getResponse | fd: %d\n", fd);
+  return NOT_FOUND_ERR; // return NULL
 }
+
 
 void monitorConnection(Connection * connection, fd_set* set){
   FD_ZERO(set);

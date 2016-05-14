@@ -5,7 +5,8 @@
 
 int printRow(void *NotUsed, int argc, char **argv, char **azColName) {
   NotUsed = 0;
-  for (int i = 0; i < argc; i=i+2) {
+  int i;
+  for ( i = 0; i < argc; i = i + 2 ) {
       printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
   }
   printf("\n");
@@ -79,7 +80,7 @@ int DbAddStudent(char name[25], char average[5]) {
 	if (rc != SQLITE_OK ) {
     if ( rc == USER_EXISTS ) {
       printf("%s\n", USER_EXISTS_ERROR_MESSAGE);
-    } 
+    }
     else {
       fprintf(stderr, "SQL error: %s\n", err_msg);
       fprintf(stderr, "SQL error: %d\n", rc);
@@ -113,10 +114,10 @@ int DbReadStudents (){
 
     sqlite3_free(err_msg);
     sqlite3_close(db);
-    
+
     return 1;
-  } 
-  
+  }
+
   sqlite3_close(db);
   return 0;
 }
@@ -139,7 +140,7 @@ int DbDeleteStudent (char name[25]){
   strcat(sql, name);
   strcat(sql, APOSTROPHE);
   strcat(sql, SEMILCOLON);
-  
+
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -180,7 +181,7 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
   strcat(sql, currentName);
   strcat(sql, APOSTROPHE);
   strcat(sql, SEMILCOLON);
-  
+
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -224,7 +225,3 @@ int DbDropTable (char tableName[25]) {
   sqlite3_close(db);
   return 0;
 }
-
-
-
-
