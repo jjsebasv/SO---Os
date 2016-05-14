@@ -7,14 +7,14 @@
 #include "../Api/commons.h"
 
 // OPTION 1
-void apiAddStudent (char * name, double average) {
+void apiAddStudent (char * name, char * average) {
 	Student *student = malloc(sizeof(Student));
+	strcpy(student->name, name);
+	strcpy(student->average, average);
 	Connection *connection = malloc(sizeof(Connection));
-	student->name = name;
-	student->average = average;
-	//printf("Student->Name: %s\n", student->name);
-	//printf("Student->average: %f\n", student->average);
-	requestServer(connection, ADD_STUDENT, sizeof(student), student);
+	printf("SIZE DE LA ESTRUCTURA: %lu\n", sizeof((*student)));
+	requestServer(connection, ADD_STUDENT, sizeof((*student)), student);
+	//printf("FD EN APIADDSTUDENT%d\n", connection->fd);
 	getResponse(connection);
 }
 
@@ -27,6 +27,6 @@ void apiDbDeleteStudent (char * name) {
 
 // OPTION 2
 void apiUpdateStudent (char * currentName, char * newName, double average) {
-	apiDbDeleteStudent(currentName);
-	apiAddStudent(newName, average);
+	//apiDbDeleteStudent(currentName);
+	//apiAddStudent(newName, average);
 }
