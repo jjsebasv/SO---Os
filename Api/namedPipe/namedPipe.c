@@ -198,3 +198,9 @@ void monitorConnection(Connection * connection, fd_set* set){
   FD_SET(connection -> fd, set);
   return;
 }
+
+int listenConnection(Connection * connection){
+    fd_set set;
+    monitorConnection(connection, &set);
+    return fdCount = select(connection -> fd + 1, &set, NULL, NULL, NULL);
+}
