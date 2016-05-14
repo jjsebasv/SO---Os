@@ -5,7 +5,8 @@
 
 int printRow(void *NotUsed, int argc, char **argv, char **azColName) {
   NotUsed = 0;
-  for (int i = 0; i < argc; i=i+2) {
+  int i;
+  for (i = 0; i < argc; i=i+2) {
       printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
   }
   printf("\n");

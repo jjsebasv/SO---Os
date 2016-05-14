@@ -24,7 +24,7 @@ int * openNamedPipe(char * namedPipeName) {
   
   strcpy(myfifo,origin);
   strcat(myfifo,namedPipeName);
-  mkfifo(myfifo, 0777);
+  mkfifo(myfifo, 0666);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
   fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
@@ -87,7 +87,7 @@ Request * getRequest(Connection * connection) {
   printf("START - readNamedPipe\n");
   read(connection-> fd, &action, sizeof(int));
   read(connection-> fd, &fd, sizeof(int));
-  read(connection-> fd, &dataSize, sizeof(size_t));
+  read(connection-> fd, &dataSize, sizeof(int));
   data = malloc (dataSize);
   read(connection-> fd, data, dataSize);
   request = createRequest(action, fd, dataSize, data);
@@ -128,6 +128,8 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   }
 
   printf("responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+
+  connection -> fd = responseFd[0];
   request = createRequest(action, responseFd[1], dataSize, data);
 
 
@@ -140,7 +142,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
-  closeNamedPipe(queueFd[1],  REQUEST_QUEUE);
+  // closeNamedPipe(queueFd[1],  REQUEST_QUEUE);
   //printf("END - requestServer\n");
   return SUCCESS;
 }
