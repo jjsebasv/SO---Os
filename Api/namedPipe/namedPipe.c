@@ -75,7 +75,7 @@ int * openNamedPipe(char * namedPipeName) {
   
   strcpy(myfifo,origin);
   strcat(myfifo,namedPipeName);
-  mkfifo(myfifo, 0777);
+  mkfifo(myfifo, 0666);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
   fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
@@ -128,9 +128,16 @@ Request * getRequest(Connection * connection) {
   read(connection-> fd, &action, sizeof(int));
   read(connection-> fd, &fd, sizeof(int));
   read(connection-> fd, &dataSize, sizeof(int));
+<<<<<<< HEAD
   student = malloc (dataSize);
   read(connection-> fd, student, dataSize);
   request = createRequest(action, fd, dataSize, (void*)student);
+=======
+  data = malloc (dataSize);
+  read(connection-> fd, data, dataSize);
+  request = createRequest(action, fd, dataSize, data);
+  printf("END - readNamedPipe\n");
+>>>>>>> fix
   return request;
 }
 
