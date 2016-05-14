@@ -35,7 +35,7 @@ int main (int argc, char const *argv[]){
 		if( fdCount > 0){
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
-				// TODO processRequest(r);
+				processRequest(r);
 			}
 		} else if ( fdCount < 0 ){
 			printf("Error\n");

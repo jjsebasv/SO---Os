@@ -23,13 +23,13 @@ typedef enum {REQUEST_OK = 200, REQUEST_INVALID_TYPE, FAILED_ON_CREATE_REQUEST} 
 
 typedef struct Student {
   char * name;
-  double average;
+  char * average;
 } Student;
 
-typedef union Connection {
+typedef struct Connection {
   int fd;
   int dataSize;
-  char* data;
+  void * data;
 } Connection;
 
 
@@ -53,7 +53,7 @@ Connection* openConnection (void);
 
 void monitorConnection(Connection * connection, fd_set* set);
 
-int requestServer(Connection * connection, int action, size_t dataSize, void * data);
+int requestServer(Connection * connection, int action, int dataSize, void * data);
 int getResponse(Connection * connection);
 
 #endif

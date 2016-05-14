@@ -33,7 +33,7 @@ static void addStudent () {
 	sprintf(averageArr, "%g", average);
 
 	// Replace DbAddStudent with apiAddStudent
-	apiAddStudent(name, average);
+	apiAddStudent(name, averageArr);
 	// DbAddStudent(name, averageArr);
 }
 
