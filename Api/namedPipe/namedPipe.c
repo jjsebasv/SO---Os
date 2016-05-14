@@ -27,6 +27,7 @@ int * openNamedPipe(char * namedPipeName) {
   mkfifo(myfifo, 0777);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
+  fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
   fd[1] = open(myfifo, O_WRONLY);
 
   //printf("END - openNamedPipe\n");
@@ -127,7 +128,6 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   }
 
   printf("responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
-  connection = createConnection(responseFd[1]);
   request = createRequest(action, responseFd[1], dataSize, data);
 
 
