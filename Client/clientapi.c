@@ -15,14 +15,15 @@ void apiAddStudent (char * name, double average) {
 	student->average = average;
 	//printf("Student->Name: %s\n", student->name);
 	//printf("Student->average: %f\n", student->average);
-	requestServer(connection, ADD_STUDENT, sizeof(student), student);
+	requestServer(&connection, ADD_STUDENT, sizeof(student), student);
+	printf("%d\n", connection -> np -> fd);
 	getResponse(connection);
 }
 
 // OPTION 3
 void apiDbDeleteStudent (char * name) {
 	Connection *connection = malloc(sizeof(Connection));
-	requestServer(connection, DELETE_STUDENT, sizeof(name), name);
+	requestServer(&connection, DELETE_STUDENT, sizeof(name), name);
 	getResponse(connection);
 }
 
