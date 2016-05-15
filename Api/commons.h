@@ -17,6 +17,7 @@ typedef enum { HELP,
 				DELETE_STUDENT,
 				READ_STUDENTS,
 				DROP_TABLE,
+        CREATE_TABLE,
 				} Action;
 
 typedef enum { ERROR_CREATE_SERVER_RESPONSE_RECIEVER = 400, ERROR_OPEN_REQUEST_QUEUE, SUCCESS, ERROR, NOT_FOUND_ERR, O_READONLY } connectionStates;
@@ -56,5 +57,6 @@ void monitorConnection(Connection * connection, fd_set* set);
 
 int requestServer(Connection * connection, int action, int dataSize, void * data);
 int getResponse(Connection * connection);
+
 
 #endif

@@ -23,16 +23,25 @@ sqlite3* DbOpen(void) {
   return db;
 }
 
-int DbCreateTable(sqlite3* db) {
+int DbCreateTable() {
+  sqlite3* db;
+  int rc = sqlite3_open(DATABASE_NAME, &db);
+
+  if (rc != SQLITE_OK) {
+    fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+    sqlite3_close(db);
+    return -1;
+  }
+
   char *err_msg = 0;
-  int rc = sqlite3_exec(db, SQL_CREATE_TABLE, 0, 0, &err_msg);
-  if (rc != SQLITE_OK ) {
+  int req = sqlite3_exec(db, SQL_CREATE_TABLE, 0, 0, &err_msg);
+  if (req != SQLITE_OK ) {
     fprintf(stderr, "SQL error: %s\n", err_msg);
-    fprintf(stderr, "SQL error: %d\n", rc);
+    fprintf(stderr, "SQL error: %d\n", req);
     sqlite3_free(err_msg);
     return -1;
   }
-  return rc;
+  return req;
 }
 
 int DbCeckTableExistance(sqlite3* db) {
@@ -58,20 +67,13 @@ int DbAddStudent(char name[25], char average[5]) {
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("%s\n", DATABASE_ERROR);
-    return -1;
+    return DATABASE_ERROR;
   }
 
 	char *err_msg = 0;
 
-
-	char sql[200] = "insert into Students values('";
-	strcat(sql, name);
-  strcat(sql, APOSTROPHE);
-	strcat(sql, COMMA);
-	strcat(sql, average);
-	strcat(sql, LAST_P);
-
+  char sql[200];
+  sprintf (sql, SQL_ADD_STUDENT, name, average);
   printf("%s\n", sql);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -79,16 +81,17 @@ int DbAddStudent(char name[25], char average[5]) {
 	if (rc != SQLITE_OK ) {
     if ( rc == USER_EXISTS ) {
       printf("%s\n", USER_EXISTS_ERROR_MESSAGE);
-    } 
-    else {
+      return ADD_STUDENT_USER_EXIST;
+    } else {
       fprintf(stderr, "SQL error: %s\n", err_msg);
       fprintf(stderr, "SQL error: %d\n", rc);
+      return DATABASE_ERROR;
     }
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
 	}
 	sqlite3_close(db);
-	return 0;
+	return ADD_STUDENT_SUCCESS;
 }
 
 int DbReadStudents (){
@@ -98,8 +101,7 @@ int DbReadStudents (){
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("%s\n", DATABASE_ERROR);
-    return -1;
+    return DATABASE_ERROR;
   }
 
   char *err_msg = 0;
@@ -118,7 +120,7 @@ int DbReadStudents (){
   } 
   
   sqlite3_close(db);
-  return 0;
+  return READ_STUDENTS_SUCCESS;
 }
 
 int DbDeleteStudent (char name[25]){
@@ -129,17 +131,15 @@ int DbDeleteStudent (char name[25]){
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("%s\n", DATABASE_ERROR);
-    return -1;
+    return DATABASE_ERROR;
   }
 
   char *err_msg = 0;
 
-  char sql[200] = "DELETE FROM Students where Name='";
-  strcat(sql, name);
-  strcat(sql, APOSTROPHE);
-  strcat(sql, SEMILCOLON);
-  
+
+  char sql[200];
+  sprintf (sql, SQL_DELETE_STUDENT, name);
+  printf("%s\n", sql);
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -150,7 +150,7 @@ int DbDeleteStudent (char name[25]){
   }
 
   sqlite3_close(db);
-  return 0;
+  return DELETE_STUDENT_SUCCESS;
 }
 
 int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
@@ -160,26 +160,14 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("%s\n", DATABASE_ERROR);
-    return -1;
+    return DATABASE_ERROR;
   }
 
   char *err_msg = 0;
 
-  // Maybe we should use this
-  // printf("%s\n", SQL_UPDATE_STUDENT(mynameis, newName, average));
-
-  char sql[200] = "UPDATE Students SET Name='";
-  strcat(sql, newName);
-  strcat(sql, APOSTROPHE);
-  strcat(sql, COMMA);
-  strcat(sql, "average='");
-  strcat(sql, average);
-  strcat(sql, APOSTROPHE);
-  strcat(sql, " WHERE Name='");
-  strcat(sql, currentName);
-  strcat(sql, APOSTROPHE);
-  strcat(sql, SEMILCOLON);
+  char sql[200];
+  sprintf (sql, SQL_UPDATE_STUDENT, newName, average, currentName);
+  printf("%s\n", sql);
   
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -191,10 +179,10 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
   }
 
   sqlite3_close(db);
-  return 0;
+  return UPDATE_STUDENT_SUCCESS;
 }
 
-int DbDropTable (char tableName[25]) {
+int DbDropTable () {
 
   int rc;
   sqlite3* db = DbOpen();
@@ -202,17 +190,11 @@ int DbDropTable (char tableName[25]) {
 
   if ( db == NULL || rc == -1 ) {
     sqlite3_close(db);
-    printf("%s\n", DATABASE_ERROR);
-    return -1;
+    return DATABASE_ERROR;
   }
   char *err_msg = 0;
 
-  char sql[200] = "DROP TABLE '";
-  strcat(sql, tableName);
-  strcat(sql, APOSTROPHE);
-  strcat(sql, SEMILCOLON);
-
-  rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+  rc = sqlite3_exec(db, SQL_DROP_TABLE, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "SQL error: %s\n", err_msg);

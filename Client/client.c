@@ -18,20 +18,14 @@ static void addStudent () {
 	scanf("%lf",&average);
 	char averageArr[5];
 	sprintf(averageArr, "%g", average);
-
-	// Replace DbAddStudent with apiAddStudent
 	apiAddStudent(name, averageArr);
-	// DbAddStudent(name, averageArr);
 }
 
 static void deleteStudent () {
 	char name[MAX_NAME_CHARACTERS];
 	printf("%s", STUDENT_NAME_MESSAGE);
 	scanf("%s" , name);
-
-	// Replace DbDeleteStudent with apiDeleteStudent
-	//apiDeleteStudent(name);
-	DbDeleteStudent(name);
+	apiDeleteStudent(name);
 }
 
 static void updateStudent () {
@@ -50,9 +44,7 @@ static void updateStudent () {
 	char averageArr[5];
 	sprintf(averageArr, "%g", average);
 
-	// Replace DbUpdateStudent with apiUpdateStudent
-	// apiUpdateStudent(currentName, newName, average);
-	DbUpdateStudent (currentName, newName, averageArr);
+	apiUpdateStudent(currentName, newName, average);
 }
 
 static void help () {
@@ -61,19 +53,19 @@ static void help () {
 	printf("%s", DELETE_STUDENT_HELP);
 	printf("%s", READ_STUDENTS_HELP);
 	printf("%s", DROP_STUDENTS_TABLE_HELP);
+	printf("%s", CREATE_STUDENTS_TABLE_HELP);
 }
 
 static void dropTable () {
-	char * tableName = "Students";
-	// Replace DbDropTable with apiDropTable
-	// apiDropTable();
-	DbDropTable(tableName);
+	apiDropTable();
+}
+
+static void createTable () {
+	apiCreateTable();
 }
 
 static void readStudents () {
-	// Replace DbReadStudents with apiReadStudents
-	// apiReadStudents();
-	DbReadStudents();
+	apiReadStudents();
 }
 
 static void invalidCommand () {
@@ -104,6 +96,10 @@ static void getCommand (int command) {
 			dropTable();
 			break;
 
+		case CREATE_TABLE:
+			createTable();
+			break;
+
 		case HELP:
 			help();
 			break;
@@ -113,8 +109,6 @@ static void getCommand (int command) {
 			invalidCommand();
 	}
 }
-
-// MAIN
 
 int main() {
 	int command;
