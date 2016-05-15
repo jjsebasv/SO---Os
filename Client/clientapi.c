@@ -6,20 +6,27 @@
 #include "client.h"
 #include "../Api/commons.h"
 
+static const char * server_msg[5] = {
+	"Estudiante agregado con exito",
+	"El estudiante ya existe",
+	"Estudiante modificado con exito",
+	"Estudiante eliminado con exito",
+	"Error en la base de datos"
+};
+
 // OPTION 1
 void apiAddStudent (char * name, char * average) {
 	Student *student = malloc(sizeof(Student));
 	strcpy(student->name, name);
 	strcpy(student->average, average);
 	Connection *connection = malloc(sizeof(Connection));
-	printf("SIZE DE LA ESTRUCTURA: %lu\n", sizeof((*student)));
 	requestServer(connection, ADD_STUDENT, sizeof((*student)), student);
-	//printf("FD EN APIADDSTUDENT%d\n", connection->fd);
-	getResponse(connection);
+	int answer = getResponse(connection);
+	printf("%s\n", server_msg[answer]);
 }
 
 // OPTION 3
-void apiDbDeleteStudent (char * name) {
+void apiDeleteStudent (char * name) {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, DELETE_STUDENT, sizeof(name), name);
 	getResponse(connection);
@@ -29,4 +36,19 @@ void apiDbDeleteStudent (char * name) {
 void apiUpdateStudent (char * currentName, char * newName, double average) {
 	//apiDbDeleteStudent(currentName);
 	//apiAddStudent(newName, average);
+}
+
+void apiDropTable() {
+	Connection *connection = malloc(sizeof(Connection));
+	requestServer(connection, DROP_TABLE , 0, NULL);
+}
+
+void apiCreateTable() {
+	Connection *connection = malloc(sizeof(Connection));
+	requestServer(connection, CREATE_TABLE , 0, NULL);
+}
+
+void apiReadStudents() {
+	Connection *connection = malloc(sizeof(Connection));
+	requestServer(connection, READ_STUDENTS, 0, NULL);
 }

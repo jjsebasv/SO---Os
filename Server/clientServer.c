@@ -18,8 +18,6 @@ int main (int argc, char const *argv[]){
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
-	printf("fd connection %d\n", c->fd);
-
 	//sets up the fds to monitor
 	monitorConnection(c, &set);
 
@@ -31,10 +29,10 @@ int main (int argc, char const *argv[]){
 		int fdCount = select(c -> fd + 1, &set, NULL, NULL, &tv);
 		tv.tv_sec = 2;
 		monitorConnection(c, &set);
-		printf("fdCount: %d\n", fdCount);
 		if( fdCount > 0){
 			r = getRequest(c);
 			if( r != NOT_FOUND ){
+				printf("Request procesada\n");
 				processRequest(r);
 			}
 		} else if ( fdCount < 0 ){
