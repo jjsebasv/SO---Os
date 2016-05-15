@@ -14,6 +14,7 @@
 #define NOT_FOUND_ERR 0
 
 #define REQUEST_QUEUE "giladita"
+#define SQL_QUEUE "bandadegilada"
 
 #define BLOCK 1024 
 
@@ -23,11 +24,10 @@ Request * createRequest(int action, int fd, int dataSize, void * data);
 
 Connection * createConnection(int fd);
 
-/**
- *  Returns two fds for the namedPipeName
- *
- *  @param  namedPipeName name of the pipe
- */
+void processRequestDatabase (Request * request);
+
+void processRequestServer (Request * request);
+
 int * openNamedPipe(char * something);
 
 void writeNamedPipe(int fd, void * data, int size);
