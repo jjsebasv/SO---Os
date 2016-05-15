@@ -6,7 +6,8 @@
 #include <netdb.h>
 #include "namedPipe.h"
 #include "../commons.h"
-#include "../../Database/database.h"
+#include <signal.h>
+#include "../../Database/databaseapi.h"
 
 Connection * createConnection(int fd){
   Connection * connection;
@@ -15,7 +16,23 @@ Connection * createConnection(int fd){
   return connection;
 }
 
-int processRequest (Request * request) {
+void processRequestServer (Request * request) {
+  int pid = fork();
+  if (pid == 0) {
+    // Server - slave
+    int* queueFd;
+    queueFd = openNamedPipe(SQL_QUEUE);
+    writeRequest(request, queueFd[1]);
+    kill(getpid(), SIGKILL);
+  } else if (pid > 0) {
+    // Do nothing 
+    // Server - master
+  } else {
+    // fork error
+  }
+}
+
+void processRequestDatabase (Request * request) {
   int state;
   switch (request->action) {
 
@@ -47,9 +64,7 @@ int processRequest (Request * request) {
 
     default:
       printf("Error request action\n");
-      return -1;
   }
-  return 0;
 }
 
 int * openNamedPipe(char * namedPipeName) {
@@ -121,15 +136,14 @@ Request * getRequest(Connection * connection) {
 
 int getResponse(Connection * connection) {
   int fd = connection-> fd;
-  printf("FD EN GET RESPONSE%d\n", fd);
   int answer;
   read(fd, &answer, sizeof(int));
   return answer;
 }
 
-Connection* openConnection (void){
+Connection* openConnection (char * namedPipe){
   Connection * connection;
-  int* fd = openNamedPipe(REQUEST_QUEUE);
+  int* fd = openNamedPipe(namedPipe);
   // change here to set where the server reads ******
   connection = createConnection(fd[0]);
   return connection;
@@ -152,8 +166,8 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
   }
-  printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
-  printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+  //printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
+  //printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
   return SUCCESS;

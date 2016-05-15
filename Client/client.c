@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "../Api/commons.h"
-#include "../Database/database.h"
 #include "client.h"
 
 static void cleanBuffer () {

@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <signal.h>
 
 #define MAX_NAME_CHARACTERS 100
 #define NOT_FOUND ((void*)0)
@@ -46,12 +47,12 @@ requestState writeRequest(Request * request, int fd);
 // Get the first request in the request queue
 Request * getRequest(Connection * connection);
 
-int processRequest(Request * request);
+void processRequestServer(Request * request);
 requestState readRequest(Request request);
 requestState deleteRequest(Request request);
 
 //OPENS REQUEST QUEUE
-Connection* openConnection (void);
+Connection* openConnection (char * namedPipe);
 
 void monitorConnection(Connection * connection, fd_set* set);
 
