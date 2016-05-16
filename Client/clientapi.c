@@ -13,7 +13,7 @@ void apiAddStudent (char * name, char * average) {
 	strcpy(student->average, average);
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, ADD_STUDENT, sizeof((*student)), student);
-	// getResponse(connection);
+	getResponse(connection);
 }
 
 // OPTION 3

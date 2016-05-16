@@ -15,11 +15,12 @@ void processRequestDatabase (Request * request) {
 
     case ADD_STUDENT:
       state = DbAddStudent(request->connection->data->name, request->connection->data->average);
-      printf("STATE %d\n", state);
-      printf("MENSAJE %s\n", serverMsg[state]);
-      printf("CONNECTION %d\n", request->connection->fd);
-      int escrito = write(request->connection->fd, serverMsg[state], strlen(serverMsg[state]+1));
-      printf("ESCRITO %d\n", escrito);
+      int* responseFd;
+      char answerPipe[10] = "";
+      sprintf(answerPipe, "%d", request -> connection ->fd);
+      responseFd = openNamedPipe(answerPipe);
+      write(responseFd[1], serverMsg[state], strlen(serverMsg[state]+1));
+      close(responseFd[1]);
       break;
 
     case UPDATE_STUDENT:

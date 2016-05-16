@@ -85,10 +85,37 @@ Request * getRequest(Connection * connection, int listened) {
 }
 
 int getResponse(Connection * connection) {
+  printf("vamo a leer de \n");
+
   int fd = connection-> fd;
-  int answer;
-  read(fd, &answer, sizeof(int));
-  return answer;
+  char answerPipe[10] = "";
+  sprintf(answerPipe, "%d", connection ->fd);
+
+  int r = 0;
+  int nread = 0;
+  int size = BLOCK;
+  char * readBuffer = malloc(BLOCK);
+  char * tmp;
+ 
+  while ( (r = read(fd, readBuffer + nread, BLOCK))  ) {
+    printf("R DEL READ %d\n", r);
+    if (r > 0) {
+      nread += r;
+    }
+
+    // realloc
+    if ( size <= nread ) {
+      if ( !(tmp = realloc(readBuffer, size + BLOCK)) ) {
+        readBuffer = tmp;
+      } else {
+        printf("Error when reading response\n");
+        return 0;
+      }
+    }
+  }
+
+  printf("%s\n", readBuffer);
+  return nread;
 }
 
 Connection* openConnection (void){
@@ -111,7 +138,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   queueFd = openNamedPipe(REQUEST_QUEUE);
   responseFd = openNamedPipe(answerPipe);
 
-  request = createRequest(action, responseFd[1], dataSize, data);
+  request = createRequest(action, getpid(), dataSize, data);
   *connection = (*request->connection);
 
   if(request == NULL || request->connection == NULL){
@@ -121,7 +148,7 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
-  return SUCCESS;
+  return responseFd[0];
 }
 
 
