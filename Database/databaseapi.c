@@ -120,7 +120,7 @@ int DbReadStudents (){
   } 
   
   sqlite3_close(db);
-  return READ_STUDENTS_SUCCESS;
+  return 0;
 }
 
 int DbDeleteStudent (char name[25]){
