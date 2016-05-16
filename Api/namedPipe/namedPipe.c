@@ -107,19 +107,19 @@ Connection* openConnection (void){
 }
 
 int getResponse(Connection * connection) {
-  int fd = connection-> fd;
+  int* fd;
   char answerPipe[10] = "";
   sprintf(answerPipe, "%d", connection ->fd);
+  fd = openNamedPipe(answerPipe);
 
-  int r = 0.cant;
+  int r = 0,cant;
   int nread = 0;
   int size = BLOCK;
   char * readBuffer;
-  char * tmp;
  
-  read(fd, &cant, sizeof(int));
-  readBuffer = malloc(cant);
-  read(fd, &readBuffer, cant);
+  r=read(fd[0], &cant, sizeof(int));
+  readBuffer = malloc(cant+1);
+  r=read(fd[0], readBuffer, cant+1);
   // while ( (r = read(fd, readBuffer + nread, BLOCK))  ) {
   //   //printf("R DEL READ %d\n", r);
   //   if (r > 0) {
@@ -136,8 +136,7 @@ int getResponse(Connection * connection) {
   //     }
   //   }
   // }
-
-  printf("%s\n", readBuffer);
+  printf("%s\n",readBuffer);
   return nread;
 }
 
@@ -148,14 +147,14 @@ int writeResponse (Request * request, int state) {
   responseFd = openNamedPipe(answerPipe);
   int dataSize = strlen(serverMsg[state]+1);
   printf("EL DATA SIZE %d\n", dataSize);
-  int written = write(responseFd[1], &dataSize, (size_t)sizeof(dataSize));
-  written += write(responseFd[1], serverMsg[state], strlen(serverMsg[state]+1));
+  int written = write(responseFd[1], &dataSize, sizeof(dataSize));
+  written += write(responseFd[1], serverMsg[state], dataSize);
   printf("Written %d en asnwer pipe %s\n", written, answerPipe);
   close(responseFd[1]);
   return 0;
 }
 
-int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
+int requestServer(Connection * connection, int action, int dataSize, void * data) {
   Request * request;
   int* responseFd;
   int* queueFd;
