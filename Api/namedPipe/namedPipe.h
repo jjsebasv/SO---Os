@@ -36,4 +36,6 @@ int closeNamedPipe(int fd, char * something);
 
 Request * getRequest(Connection * connection, int listened);
 
+int writeResponse (Request * request, int state);
+
 #endif

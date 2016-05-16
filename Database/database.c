@@ -9,28 +9,14 @@
 #include "../Api/namedPipe/namedPipe.h"
 #include "databaseapi.h"
 
-// static const char * serverMsg[5] = {
-//   "Estudiante agregado con exito",
-//   "El estudiante ya existe",
-//   "Estudiante modificado con exito",
-//   "Estudiante eliminado con exito",
-//   "Error en la base de datos"
-// };
-
 void processRequestDatabase (Request * request) {
   int state;
-  printf("ACTION %d\n", request->action);
   switch (request->action) {
 
     case ADD_STUDENT:
       state = DbAddStudent(request->connection->data->name, request->connection->data->average);
-      //int* responseFd;
-      //char answerPipe[10] = "";
-      //sprintf(answerPipe, "%d", request -> connection ->fd);
-      printf("process request database\n");
-      //responseFd = openNamedPipe(answerPipe);
-      //write(responseFd[1], serverMsg[state], strlen(serverMsg[state]+1));
-      //close(responseFd[1]);
+      printf("Procensado request DB ...\n");
+      writeResponse(request, state);
       break;
 
     case UPDATE_STUDENT:

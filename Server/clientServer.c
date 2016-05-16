@@ -13,6 +13,7 @@ void processRequestServer (Request * request) {
   if (pid == 0) {
     // Datos - vamo a procesar la request
   	processRequestDatabase(request);
+  	printf("Request procesada!\n");
     kill(getpid(), SIGKILL);
   } else if (pid > 0) {
     // Server - vamo a agarrar otra request
@@ -31,16 +32,15 @@ int main (int argc, char const *argv[]){
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
-	printf("el fd es %d\n", c -> fd);
+	//printf("el fd es %d\n", c -> fd);
 
 	while(1) {
-		printf("while 1\n");
 		listened = listenConnection(c);
-		printf("listened: %d\n", listened);
+		//printf("listened: %d\n", listened);
 		if( listened >=  0){
 			r = getRequest(c, listened);
 			if( r != NOT_FOUND ){
-				printf("vamo a procesar\n");
+				//printf("vamo a procesar\n");
 				processRequestServer(r);
 			}
 		} else{
