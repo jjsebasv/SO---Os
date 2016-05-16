@@ -13,8 +13,8 @@
 Connection * openConnection();
 requestState writeRequest(Request * request, int fd);
 int closeSocket(int fd) ;
-int requestServer(Connection * connection, int action, size_t dataSize, void * data);
+int requestServer(Connection * connection, int action, int dataSize, void * data);
 int listenConnection(Connection * connection);
 Connection * createConnection(int fd);
-Request * createRequest(int action, int fd, size_t dataSize, void * data);
+Request * createRequest(int action, int fd, int dataSize, void * data);
 #endif
