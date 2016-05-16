@@ -36,6 +36,6 @@ int readNamedPipe (int fd, void * buffer);
 
 int closeNamedPipe(int fd, char * something);
 
-Request * getRequest(Connection * connection);
+Request * getRequest(Connection * connection, int listened);
 
 #endif

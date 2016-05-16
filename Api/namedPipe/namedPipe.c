@@ -142,15 +142,17 @@ int getResponse(Connection * connection) {
   return answer;
 }
 
-Connection* openConnection (char * namedPipe){
+Connection* openConnection (void){
+  printf("START - openConnection\n");
   Connection * connection;
-  int* fd = openNamedPipe(namedPipe);
+  int* fd = openNamedPipe(REQUEST_QUEUE);
   // change here to set where the server reads ******
   connection = createConnection(fd[0]);
+  printf("END - openConnection\n");
   return connection;
 }
 
-int requestServer(Connection * connection, int action, int dataSize, void * data) {
+int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
   Request * request;
   int responseFd[2];
   int* queueFd;

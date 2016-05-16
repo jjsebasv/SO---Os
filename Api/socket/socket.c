@@ -117,12 +117,6 @@ Request * createRequest(int action, int fd, size_t dataSize, void * data){
   return request;
 }
 
-
-
-
-
-
-
 int getResponse(Connection * connection) {
   printf("START - getResponse\n");
   int aux_err = 0;
