@@ -1,7 +1,6 @@
 #ifndef _NAMED_PIPE_H_
 #define _NAMED_PIPE_H_
 
-// From http://stackoverflow.com/questions/2784500/how-to-send-a-simple-string-between-two-programs-using-pipes
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -12,15 +11,15 @@
 #include "../commons.h"
 
 #define NOT_FOUND_ERR 0
-
 #define REQUEST_QUEUE "giladita"
-#define SQL_QUEUE "bandadegilada"
-
 #define BLOCK 1024 
 
+<<<<<<< HEAD
 
 //the client should use this function to start a request
 //request is initialized and sent to the server
+=======
+>>>>>>> b7e6cee97a486acfbfb5c1d54a4d19793ca9b44a
 Request * createRequest(int action, int fd, int dataSize, void * data);
 
 Connection * createConnection(int fd);

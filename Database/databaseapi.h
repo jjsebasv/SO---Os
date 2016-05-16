@@ -10,10 +10,6 @@
 #define NO_TABLE 404
 #define USER_EXISTS 19
 #define NO_SESSION NULL
-#define COMMA ","
-#define LAST_P ");"
-#define SEMILCOLON ";"
-#define APOSTROPHE "'"
 #define SQL_SELECT_ALL "select * from Students;"
 #define USER_EXISTS_ERROR_MESSAGE "That user is already registered"
 #define MISSING_TABLE 1
@@ -29,6 +25,7 @@ typedef enum { ADD_STUDENT_SUCCESS = 0,
 							DELETE_STUDENT_SUCCESS,
 							CREATE_TABLE_SUCCESS,
 							DROP_TABLE_SUCCESS,
+							READ_STUDENT_SUCESS,
 							DATABASE_ERROR,
 	} sqlState;
 

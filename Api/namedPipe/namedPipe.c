@@ -9,13 +9,14 @@
 #include <signal.h>
 #include "../../Database/databaseapi.h"
 
-static const char * serverMsg[7] = {
+static const char * serverMsg[8] = {
   "Estudiante agregado con exito!",
   "El estudiante ya existe!",
   "Estudiante modificado con exito!",
   "Estudiante eliminado con exito!",
   "Tabla creada con exito!",
   "Tabla eliminada con exito!",
+  "Leyendo data...",
   "Error en la base de datos!"
 };
 
@@ -145,8 +146,6 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
   writeRequest(request, queueFd[1]);
   return responseFd[0];
 }
-
-
 
 Request * createRequest(int action, int fd, int dataSize, void * data){
   Connection * connection = createConnection(fd);

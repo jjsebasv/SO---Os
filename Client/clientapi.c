@@ -32,17 +32,20 @@ void apiUpdateStudent (char * currentName, char * newName, char * average) {
 void apiDropTable() {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, DROP_TABLE , 0, NULL);
+	getResponse(connection);
 }
 
 void apiCreateTable() {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, CREATE_TABLE , 0, NULL);
 	getResponse(connection);
+	getResponse(connection);
 }
 
 void apiReadStudents() {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, READ_STUDENTS, 0, NULL);
+	getResponse(connection);
 	printStudents();
 }
 
