@@ -6,14 +6,6 @@
 #include "client.h"
 #include "../Api/commons.h"
 
-static const char * server_msg[5] = {
-	"Estudiante agregado con exito",
-	"El estudiante ya existe",
-	"Estudiante modificado con exito",
-	"Estudiante eliminado con exito",
-	"Error en la base de datos"
-};
-
 // OPTION 1
 void apiAddStudent (char * name, char * average) {
 	Student *student = malloc(sizeof(Student));
@@ -21,8 +13,7 @@ void apiAddStudent (char * name, char * average) {
 	strcpy(student->average, average);
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, ADD_STUDENT, sizeof((*student)), student);
-	int answer = getResponse(connection);
-	printf("%s\n", server_msg[answer]);
+	getResponse(connection);
 }
 
 // OPTION 3

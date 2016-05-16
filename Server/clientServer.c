@@ -6,6 +6,21 @@
 #include <stdio.h>
 #include <time.h>
 #include "../Api/commons.h"
+#include "../Database/databaseapi.h"
+
+void processRequestServer (Request * request) {
+  int pid = fork();
+  if (pid == 0) {
+    // Datos - vamo a procesar la request
+  	processRequestDatabase(request);
+  	printf("Request procesada!\n");
+    kill(getpid(), SIGKILL);
+  } else if (pid > 0) {
+    // Server - vamo a agarrar otra request
+  } else {
+    // fork error
+  }
+}
 
 int main (int argc, char const *argv[]){
 
@@ -17,14 +32,16 @@ int main (int argc, char const *argv[]){
 	if( (c = openConnection()) == NOT_FOUND) {
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
-	printf("el fd es %d\n", c -> fd);
+	//printf("el fd es %d\n", c -> fd);
+
 	while(1) {
 		listened = listenConnection(c);
-		printf("listened: %d\n", listened);
+		//printf("listened: %d\n", listened);
 		if( listened >=  0){
 			r = getRequest(c, listened);
 			if( r != NOT_FOUND ){
-				// TODO processRequest(r);
+				//printf("vamo a procesar\n");
+				processRequestServer(r);
 			}
 		} else{
 			printf("Error\n");

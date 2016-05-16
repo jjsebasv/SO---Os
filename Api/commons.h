@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
-
+#include <time.h>
 
 #define MAX_NAME_CHARACTERS 100
 #define NOT_FOUND ((void*)0)
@@ -56,7 +56,7 @@ Request * getRequest(Connection * connection, int listened);
 
 void monitorConnection(Connection * connection, fd_set* set);
 
-int requestServer(Connection * connection, int action, size_t dataSize, void * data);
+int requestServer(Connection * connection, int action, int dataSize, void * data);
 int getResponse(Connection * connection);
 int listenConnection(Connection * connection);
 

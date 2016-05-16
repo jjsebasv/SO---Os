@@ -110,6 +110,7 @@ static void getCommand (int command) {
 }
 
 int main() {
+	srand(time(NULL));
 	int command;
 
 	printf("%s\n", WELCOME);

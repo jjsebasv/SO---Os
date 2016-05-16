@@ -24,8 +24,6 @@ Request * createRequest(int action, int fd, int dataSize, void * data);
 
 Connection * createConnection(int fd);
 
-void processRequestDatabase (Request * request);
-
 void processRequestServer (Request * request);
 
 int * openNamedPipe(char * something);
@@ -37,5 +35,7 @@ int readNamedPipe (int fd, void * buffer);
 int closeNamedPipe(int fd, char * something);
 
 Request * getRequest(Connection * connection, int listened);
+
+int writeResponse (Request * request, int state);
 
 #endif

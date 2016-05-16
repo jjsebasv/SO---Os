@@ -5,7 +5,8 @@
 
 int printRow(void *NotUsed, int argc, char **argv, char **azColName) {
   NotUsed = 0;
-  for (int i = 0; i < argc; i=i+2) {
+  int i;
+  for (i = 0; i < argc; i=i+2) {
       printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
   }
   printf("\n");
@@ -74,7 +75,6 @@ int DbAddStudent(char name[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_ADD_STUDENT, name, average);
-  printf("%s\n", sql);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -139,7 +139,6 @@ int DbDeleteStudent (char name[25]){
 
   char sql[200];
   sprintf (sql, SQL_DELETE_STUDENT, name);
-  printf("%s\n", sql);
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -167,7 +166,6 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_UPDATE_STUDENT, newName, average, currentName);
-  printf("%s\n", sql);
   
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
