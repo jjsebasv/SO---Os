@@ -8,6 +8,7 @@ void apiUpdateStudent (char * currentName, char * newName, char * average);
 void apiDropTable();
 void apiReadStudents();
 void apiCreateTable();
+void printStudents();
 
 #define ADD_STUDENT_HELP "(1) Add a new student\n"
 #define UPDATE_STUDENT_HELP "(2) Update a student\n"

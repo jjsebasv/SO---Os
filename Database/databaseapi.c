@@ -6,9 +6,13 @@
 int printRow(void *NotUsed, int argc, char **argv, char **azColName) {
   NotUsed = 0;
   int i;
+  FILE * fp;
+  fp = fopen ("../Client/dababaseExport.txt", "aw+");
   for (i = 0; i < argc; i=i+2) {
-      printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
+    printf("%s\t%s", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
+    fprintf(fp, "%s\t%s\n", argv[i] ? argv[i] : "NULL", argv[i+1] ? argv[i+1] : "NULL");
   }
+  fclose(fp);
   printf("\n");
   return 0;
 }
@@ -95,6 +99,7 @@ int DbAddStudent(char name[25], char average[5]) {
 }
 
 int DbReadStudents (){
+  remove("../Client/dababaseExport.txt");
   int rc;
   sqlite3* db = DbOpen();
   rc = DbCeckTableExistance(db);
@@ -115,10 +120,10 @@ int DbReadStudents (){
 
     sqlite3_free(err_msg);
     sqlite3_close(db);
-    
+
     return 1;
-  } 
-  
+  }
+
   sqlite3_close(db);
   return READ_STUDENTS_SUCCESS;
 }
@@ -166,7 +171,7 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_UPDATE_STUDENT, newName, average, currentName);
-  
+
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -204,7 +209,3 @@ int DbDropTable () {
   sqlite3_close(db);
   return DROP_TABLE_SUCCESS;
 }
-
-
-
-
