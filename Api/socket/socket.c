@@ -13,6 +13,14 @@
 #define LISTEN_BACKLOG 50
 #define	MAX_CONNECTIONS 100
 
+static const char * serverMsg[5] = {
+  "Estudiante agregado con exito",
+  "El estudiante ya existe",
+  "Estudiante modificado con exito",
+  "Estudiante eliminado con exito",
+  "Error en la base de datos"
+};
+
 Connection * openConnection(){
 	struct sockaddr_un my_addr;
 	int socketfd;
@@ -93,6 +101,7 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
  }
 
   connection -> fd = socketfd;
+  printf("%d\n",socketfd );
   request = createRequest(action, socketfd, dataSize, data);
   printf("data size %d\n",request->connection->dataSize);
   if(request == NULL || request->connection == NULL){
@@ -100,7 +109,7 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
   }
 
   writeRequest(request, socketfd);
-
+printf("listo\n");
   return SUCCESS;
 }
 
@@ -135,17 +144,35 @@ Request * createRequest(int action, int fd, int dataSize, void * data){
 int getResponse(Connection * connection) {
   printf("START - getResponse\n");
   int aux_err = 0;
+  char * buffer;
   int fd = connection-> fd, size;
-  aux_err = recv(fd, &size, sizeof(int),0);
-  if ( aux_err ){
+  printf("%d\n",connection ->fd );
+  aux_err = read(fd, &size, sizeof(int));
+  printf("leyo %d\n",aux_err );
+  if ( aux_err == -1){
+    printf("fallo\n");
   	closeSocket(fd);
   	return ERROR;
   }
-  connection -> dataSize = size;
-  connection -> data = malloc(size);
-  aux_err = recv(fd, &connection-> data, size,0);
-  if ( aux_err )
+  buffer = malloc(size+1);
+  aux_err = read(fd,buffer , size+1);
+  printf("leyo %d\n",aux_err );
+
+  if ( aux_err ==-1){
+    printf("fallo\n");
     return ERROR;
-  printf("END - getResponse | fd: %d\n", fd);
+    
+  }
+  printf("END - getResponse | fd: %d\n response: %s\n", fd,buffer);
   return NOT_FOUND_ERR; // return NULL
+}
+
+int writeResponse (Request * request, int state) {
+  int dataSize = strlen(serverMsg[state]+1);
+  printf("EL DATA SIZE %d\n", dataSize);
+  int written = write(request->connection->fd, &dataSize, sizeof(dataSize));
+  written += write(request->connection->fd, serverMsg[state], dataSize);
+  printf("Written %d en asnwer pipe\n", written);
+  closeSocket(request->connection->fd);
+  return 0;
 }
