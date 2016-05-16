@@ -95,12 +95,12 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 }
 
 int listenConnection(Connection * connection){
-struct sockaddr_un clientName;
-socklen_t clientNameLen;
-int clientSocketfd;
-listen (connection -> fd, MAX_CONNECTIONS);
-clientSocketfd = accept(connection -> fd, (struct sockaddr*)&clientName, &clientNameLen);
-return clientSocketfd;
+  struct sockaddr_un clientName;
+  socklen_t clientNameLen;
+  int clientSocketfd;
+  listen (connection -> fd, MAX_CONNECTIONS);
+  clientSocketfd = accept(connection -> fd, (struct sockaddr*)&clientName, &clientNameLen);
+  return clientSocketfd;
 }
 
 Connection * createConnection(int fd){
