@@ -72,40 +72,19 @@ static void invalidCommand () {
 }
 
 static void getCommand (int command) {
-
-	switch (command) {
-
-		case ADD_STUDENT:
-			addStudent();
-			break;
-
-		case UPDATE_STUDENT:
-			updateStudent();
-			break;
-
-		case DELETE_STUDENT:
-			deleteStudent();
-			break;
-
-		case READ_STUDENTS:
-			readStudents();
-			break;
-
-		case DROP_TABLE:
-			dropTable();
-			break;
-
-		case CREATE_TABLE:
-			createTable();
-			break;
-
-		case HELP:
-			help();
-			break;
-
-		default:
-			cleanBuffer();
-			invalidCommand();
+	void (*functionChooser[7])();
+	functionChooser[HELP] = help;
+ 	functionChooser[ADD_STUDENT] = addStudent;
+ 	functionChooser[UPDATE_STUDENT] = updateStudent;
+ 	functionChooser[DELETE_STUDENT] = deleteStudent;
+	functionChooser[READ_STUDENTS] = readStudents;
+	functionChooser[DROP_TABLE] = dropTable;
+	functionChooser[CREATE_TABLE] = createTable;
+	if ( command < 7 ) {
+		(*functionChooser[command])();
+	} else {
+		cleanBuffer();
+		invalidCommand();
 	}
 }
 
