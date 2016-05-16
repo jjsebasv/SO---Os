@@ -43,4 +43,17 @@ void apiCreateTable() {
 void apiReadStudents() {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, READ_STUDENTS, 0, NULL);
+	printStudents();
+}
+
+void printStudents() {
+	printf("Name\tAverage\n");
+	int c;
+	FILE *file;
+	file = fopen("dababaseExport.txt", "r");
+	if (file) {
+    while ((c = getc(file)) != EOF)
+      putchar(c);
+    fclose(file);
+	}
 }
