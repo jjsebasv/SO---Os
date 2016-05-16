@@ -25,7 +25,8 @@ void processRequestDatabase (Request * request) {
       break;
 
     case READ_STUDENTS:
-      DbReadStudents();
+      state = DbReadStudents();
+      writeResponse(request, state);
       break;
 
     case DROP_TABLE:
