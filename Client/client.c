@@ -43,7 +43,7 @@ static void updateStudent () {
 	char averageArr[5];
 	sprintf(averageArr, "%g", average);
 
-	apiUpdateStudent(currentName, newName, average);
+	apiUpdateStudent(currentName, newName, averageArr);
 }
 
 static void help () {

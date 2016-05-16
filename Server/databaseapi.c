@@ -16,7 +16,6 @@ sqlite3* DbOpen(void) {
   sqlite3* db;
   int rc = sqlite3_open(DATABASE_NAME, &db);
   if (rc != SQLITE_OK) {
-    fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
     return NO_SESSION;
   }
@@ -28,9 +27,8 @@ int DbCreateTable() {
   int rc = sqlite3_open(DATABASE_NAME, &db);
 
   if (rc != SQLITE_OK) {
-    fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
-    return -1;
+    return DATABASE_ERROR;
   }
 
   char *err_msg = 0;
@@ -39,9 +37,9 @@ int DbCreateTable() {
     fprintf(stderr, "SQL error: %s\n", err_msg);
     fprintf(stderr, "SQL error: %d\n", req);
     sqlite3_free(err_msg);
-    return -1;
+    return DATABASE_ERROR;
   }
-  return req;
+  return CREATE_TABLE_SUCCESS;
 }
 
 int DbCeckTableExistance(sqlite3* db) {
@@ -74,7 +72,6 @@ int DbAddStudent(char name[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_ADD_STUDENT, name, average);
-  printf("%s\n", sql);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -112,11 +109,9 @@ int DbReadStudents (){
   if (rc != SQLITE_OK ) {
     fprintf(stderr, "Failed to select data\n");
     fprintf(stderr, "SQL error: %s\n", err_msg);
-
     sqlite3_free(err_msg);
     sqlite3_close(db);
-    
-    return 1;
+    return DATABASE_ERROR;
   } 
   
   sqlite3_close(db);
@@ -139,7 +134,6 @@ int DbDeleteStudent (char name[25]){
 
   char sql[200];
   sprintf (sql, SQL_DELETE_STUDENT, name);
-  printf("%s\n", sql);
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -147,6 +141,7 @@ int DbDeleteStudent (char name[25]){
     fprintf(stderr, "SQL error: %d\n", rc);
     sqlite3_free(err_msg);
     sqlite3_close(db);
+    return DATABASE_ERROR;
   }
 
   sqlite3_close(db);
@@ -167,7 +162,6 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_UPDATE_STUDENT, newName, average, currentName);
-  printf("%s\n", sql);
   
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -176,6 +170,7 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
     fprintf(stderr, "SQL error: %d\n", rc);
     sqlite3_free(err_msg);
     sqlite3_close(db);
+    return DATABASE_ERROR;
   }
 
   sqlite3_close(db);
@@ -201,10 +196,11 @@ int DbDropTable () {
     fprintf(stderr, "SQL error: %d\n", rc);
     sqlite3_free(err_msg);
     sqlite3_close(db);
+    return DATABASE_ERROR;
   }
 
   sqlite3_close(db);
-  return 0;
+  return DROP_TABLE_SUCCESS;
 }
 
 

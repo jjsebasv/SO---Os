@@ -7,64 +7,23 @@
 #include "namedPipe.h"
 #include "../commons.h"
 #include <signal.h>
-#include "../../Database/databaseapi.h"
+#include <string.h>
+#include <sys/uio.h>
+#include "../../Server/databaseapi.h"
+
+static const char * serverMsg[5] = {
+  "Estudiante agregado con exito",
+  "El estudiante ya existe",
+  "Estudiante modificado con exito",
+  "Estudiante eliminado con exito",
+  "Error en la base de datos"
+};
 
 Connection * createConnection(int fd){
   Connection * connection;
   connection = malloc(sizeof(Connection));
   connection -> fd = fd;
   return connection;
-}
-
-void processRequestServer (Request * request) {
-  int pid = fork();
-  if (pid == 0) {
-    // Server - slave
-    int* queueFd;
-    queueFd = openNamedPipe(SQL_QUEUE);
-    writeRequest(request, queueFd[1]);
-    kill(getpid(), SIGKILL);
-  } else if (pid > 0) {
-    // Do nothing 
-    // Server - master
-  } else {
-    // fork error
-  }
-}
-
-void processRequestDatabase (Request * request) {
-  int state;
-  switch (request->action) {
-
-    case ADD_STUDENT:
-      state = DbAddStudent(request->connection->data->name, request->connection->data->average);
-      printf("STATE %d\n", state);
-      write(request->connection->fd, &state, sizeof(int));
-      break;
-
-    case UPDATE_STUDENT:
-      //DbUpdateStudent();
-      break;
-
-    case DELETE_STUDENT:
-      DbDeleteStudent(request->connection->data->name);
-      break;
-
-    case READ_STUDENTS:
-      DbReadStudents();
-      break;
-
-    case DROP_TABLE:
-      DbDropTable();
-      break;
-
-    case CREATE_TABLE:
-      DbCreateTable();
-      break;
-
-    default:
-      printf("Error request action\n");
-  }
 }
 
 int * openNamedPipe(char * namedPipeName) {
@@ -135,10 +94,32 @@ Request * getRequest(Connection * connection) {
 }
 
 int getResponse(Connection * connection) {
+  printf("vamo a leer de %d\n", connection-> fd);
   int fd = connection-> fd;
-  int answer;
-  read(fd, &answer, sizeof(int));
-  return answer;
+  int r = 0;
+  int nread = 0;
+  int size = BLOCK;
+  char * readBuffer = malloc(BLOCK);
+  char * tmp;
+ 
+  while ( (r = read(fd, readBuffer + nread, BLOCK))  ) {
+    if (r > 0) {
+      nread += r;
+    }
+
+    // realloc
+    if ( size <= nread ) {
+      if ( !(tmp = realloc(readBuffer, size + BLOCK)) ) {
+        readBuffer = tmp;
+      } else {
+        printf("Error when reading response\n");
+        return 0;
+      }
+    }
+  }
+
+  printf("%s\n", readBuffer);
+  return nread;
 }
 
 Connection* openConnection (char * namedPipe){
@@ -167,10 +148,11 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
     return FAILED_ON_CREATE_REQUEST;
   }
   //printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
-  //printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+  // responseFd[0] leer responseFd[1] escribir
+  printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
-  return SUCCESS;
+  return responseFd[0];
 }
 
 

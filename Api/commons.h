@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <sys/uio.h>
 #include <signal.h>
 
 #define MAX_NAME_CHARACTERS 100
