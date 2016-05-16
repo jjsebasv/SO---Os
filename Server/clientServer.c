@@ -7,6 +7,19 @@
 #include <time.h>
 #include "../Api/commons.h"
 
+void processRequestServer (Request * request) {
+  int pid = fork();
+  if (pid == 0) {
+    // Datos - vamo a procesar la request
+  	processRequestDatabase(request);
+    kill(getpid(), SIGKILL);
+  } else if (pid > 0) {
+    // Server - vamo a agarrar otra request
+  } else {
+    // fork error
+  }
+}
+
 int main (int argc, char const *argv[]){
 
 	int listened = 0;

@@ -74,7 +74,6 @@ int DbAddStudent(char name[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_ADD_STUDENT, name, average);
-  printf("%s\n", sql);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -139,7 +138,6 @@ int DbDeleteStudent (char name[25]){
 
   char sql[200];
   sprintf (sql, SQL_DELETE_STUDENT, name);
-  printf("%s\n", sql);
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
   if (rc != SQLITE_OK ) {
@@ -167,7 +165,6 @@ int DbUpdateStudent (char currentName[25], char newName[25], char average[5]) {
 
   char sql[200];
   sprintf (sql, SQL_UPDATE_STUDENT, newName, average, currentName);
-  printf("%s\n", sql);
   
   rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 

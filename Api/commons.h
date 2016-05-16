@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
-
+#include <time.h>
 
 #define MAX_NAME_CHARACTERS 100
 #define NOT_FOUND ((void*)0)

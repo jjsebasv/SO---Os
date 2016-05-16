@@ -16,57 +16,6 @@ Connection * createConnection(int fd){
   return connection;
 }
 
-void processRequestServer (Request * request) {
-  int pid = fork();
-  if (pid == 0) {
-    // Server - slave
-    int* queueFd;
-    queueFd = openNamedPipe(SQL_QUEUE);
-    writeRequest(request, queueFd[1]);
-    kill(getpid(), SIGKILL);
-  } else if (pid > 0) {
-    // Do nothing 
-    // Server - master
-  } else {
-    // fork error
-  }
-}
-
-void processRequestDatabase (Request * request) {
-  int state;
-  switch (request->action) {
-
-    case ADD_STUDENT:
-      state = DbAddStudent(request->connection->data->name, request->connection->data->average);
-      printf("STATE %d\n", state);
-      write(request->connection->fd, &state, sizeof(int));
-      break;
-
-    case UPDATE_STUDENT:
-      //DbUpdateStudent();
-      break;
-
-    case DELETE_STUDENT:
-      DbDeleteStudent(request->connection->data->name);
-      break;
-
-    case READ_STUDENTS:
-      DbReadStudents();
-      break;
-
-    case DROP_TABLE:
-      DbDropTable();
-      break;
-
-    case CREATE_TABLE:
-      DbCreateTable();
-      break;
-
-    default:
-      printf("Error request action\n");
-  }
-}
-
 int * openNamedPipe(char * namedPipeName) {
   char origin[] = "/tmp/";
   char myfifo[80];
@@ -154,13 +103,13 @@ Connection* openConnection (void){
 
 int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
   Request * request;
-  int responseFd[2];
+  int* responseFd;
   int* queueFd;
-  queueFd = openNamedPipe(REQUEST_QUEUE);
+  char answerPipe[10] = "";
+  sprintf(answerPipe, "%d", getpid());
 
-  if( pipe(responseFd) != 0){
-    return -1;
-  }
+  queueFd = openNamedPipe(REQUEST_QUEUE);
+  responseFd = openNamedPipe(answerPipe);
 
   request = createRequest(action, responseFd[1], dataSize, data);
   *connection = (*request->connection);
@@ -168,8 +117,8 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
   }
-  //printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
-  //printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
+  printf("QUEUE queueFd[0]: %d y queueFd[1]: %d\n", queueFd[0], queueFd[1]);
+  printf("RESPONSE responseFd[0]: %d y responseFd[1]: %d\n", responseFd[0], responseFd[1]);
 
   writeRequest(request, queueFd[1]);
   return SUCCESS;
