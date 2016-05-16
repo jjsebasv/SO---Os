@@ -14,11 +14,11 @@
 #define	MAX_CONNECTIONS 100
 
 static const char * serverMsg[5] = {
-  "Estudiante agregado con exito",
-  "El estudiante ya existe",
-  "Estudiante modificado con exito",
-  "Estudiante eliminado con exito",
-  "Error en la base de datos"
+  "Estudiante agregado con exito ",
+  "El estudiante ya existe ",
+  "Estudiante modificado con exito ",
+  "Estudiante eliminado con exito ",
+  "Error en la base de datos "
 };
 
 Connection * openConnection(){
@@ -47,15 +47,9 @@ requestState writeRequest(Request * request, int fd){
   int cant;
   printf("START - writeRequest\n");
   printf("FD %d\n", fd);
-  cant = write(fd, &request -> action, sizeof(request -> action));
-  printf("cantidad de caracteres escritos : %d\n",cant);
-  cant = write(fd, &request -> connection -> fd, sizeof(request -> connection -> fd));
-  printf("cantidad de caracteres escritos : %d\n",cant);
-  printf("size = %d\n",request->connection->dataSize);
-  cant = write(fd, &request -> connection -> dataSize, sizeof(request -> connection -> dataSize));
-  printf("cantidad de caracteres escritos : %d\n",cant);
-  cant = write(fd, &request -> connection -> data, request -> connection -> dataSize);
-  printf("cantidad de caracteres escritos : %d\n",cant);
+  cant = write(fd, &request -> action, sizeof(int));
+  cant = write(fd, &request -> connection -> dataSize, sizeof(int));
+  cant = write(fd, request -> connection -> data, request -> connection -> dataSize);
   printf("END - writeRequest\n");
   return REQUEST_OK;
 }
@@ -68,19 +62,12 @@ Request * getRequest(Connection * connection, int listened) {
   Request *request; 
   int action, fd,cant;
   int dataSize;
-  void * data;
-  printf("fd asdasd %d\n",connection ->fd);
-  printf("numero del fd del cliente: %d\n",listened);
-  cant = read(listened, &action, sizeof(int));
-  printf("cantidad de caracteres leidos: %d\n",cant);
-  cant = read(listened, &fd, sizeof(int));
-  printf("cantidad de caracteres leidos: %d\n",cant);
-  cant = read(listened, &dataSize, sizeof(int));
-  printf("cantidad de caracteres leidos: %d\n",cant);
-  data = malloc (dataSize);
-  cant = read(listened, data, dataSize);
-  printf("cantidad de caracteres leidos: %d\n",cant);
-  request = createRequest(action, listened, dataSize, data);
+  Student * student;
+  read(listened, &action, sizeof(int));
+  read(listened, &dataSize, sizeof(int));
+  student = malloc (dataSize);
+  read(listened, student, dataSize);
+  request = createRequest(action, listened, dataSize, (void*)student);
   return request;
 }
 
