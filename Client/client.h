@@ -1,5 +1,6 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
+#include "../Api/commons.h"
 
 void apiAddStudent (char * name, char * average);
 void apiDeleteStudent (char * name);

@@ -75,7 +75,7 @@ int * openNamedPipe(char * namedPipeName) {
   
   strcpy(myfifo,origin);
   strcat(myfifo,namedPipeName);
-  mkfifo(myfifo, 0777);
+  mkfifo(myfifo, 0666);
 
   fd[0] = open(myfifo, O_RDONLY|O_NONBLOCK);
   fcntl(fd[0], F_SETFL, fcntl(fd[0], F_GETFL) &~O_NONBLOCK);
@@ -120,7 +120,8 @@ int closeNamedPipe(int fd, char * name) {
   return 0;
 }
 
-Request * getRequest(Connection * connection) {
+Request * getRequest(Connection * connection, int listened) {
+  printf("START - getRequest\n");
   Request *request; 
   int action, fd = 0;
   int dataSize;
@@ -141,15 +142,17 @@ int getResponse(Connection * connection) {
   return answer;
 }
 
-Connection* openConnection (char * namedPipe){
+Connection* openConnection (void){
+  printf("START - openConnection\n");
   Connection * connection;
-  int* fd = openNamedPipe(namedPipe);
+  int* fd = openNamedPipe(REQUEST_QUEUE);
   // change here to set where the server reads ******
   connection = createConnection(fd[0]);
+  printf("END - openConnection\n");
   return connection;
 }
 
-int requestServer(Connection * connection, int action, int dataSize, void * data) {
+int requestServer(Connection * connection, int action, size_t dataSize, void * data) {
   Request * request;
   int responseFd[2];
   int* queueFd;
@@ -161,7 +164,6 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
 
   request = createRequest(action, responseFd[1], dataSize, data);
   *connection = (*request->connection);
-
 
   if(request == NULL || request->connection == NULL){
     return FAILED_ON_CREATE_REQUEST;
@@ -191,4 +193,10 @@ void monitorConnection(Connection * connection, fd_set* set){
   FD_ZERO(set);
   FD_SET(connection -> fd, set);
   return;
+}
+
+int listenConnection(Connection * connection){
+    fd_set set;
+    monitorConnection(connection, &set);
+    return select(connection -> fd + 1, &set, NULL, NULL, NULL);
 }
