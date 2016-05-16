@@ -24,9 +24,9 @@ void apiDeleteStudent (char * name) {
 }
 
 // OPTION 2
-void apiUpdateStudent (char * currentName, char * newName, double average) {
-	//apiDbDeleteStudent(currentName);
-	//apiAddStudent(newName, average);
+void apiUpdateStudent (char * currentName, char * newName, char * average) {
+	apiDeleteStudent(currentName);
+	apiAddStudent(newName, average);
 }
 
 void apiDropTable() {
@@ -37,6 +37,7 @@ void apiDropTable() {
 void apiCreateTable() {
 	Connection *connection = malloc(sizeof(Connection));
 	requestServer(connection, CREATE_TABLE , 0, NULL);
+	getResponse(connection);
 }
 
 void apiReadStudents() {

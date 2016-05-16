@@ -11,20 +11,17 @@
 
 void processRequestDatabase (Request * request) {
   int state;
+  printf("Procensado request DB ...\n");
   switch (request->action) {
 
     case ADD_STUDENT:
       state = DbAddStudent(request->connection->data->name, request->connection->data->average);
-      printf("Procensado request DB ...\n");
       writeResponse(request, state);
       break;
 
-    case UPDATE_STUDENT:
-      //DbUpdateStudent();
-      break;
-
     case DELETE_STUDENT:
-      DbDeleteStudent(request->connection->data->name);
+      state = DbDeleteStudent(request->connection->data->name);
+      writeResponse(request, state);
       break;
 
     case READ_STUDENTS:
@@ -36,7 +33,8 @@ void processRequestDatabase (Request * request) {
       break;
 
     case CREATE_TABLE:
-      DbCreateTable();
+      state = DbCreateTable();
+      writeResponse(request, state);
       break;
 
     default:

@@ -31,7 +31,7 @@ int DbCreateTable() {
   if (rc != SQLITE_OK) {
     fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
-    return -1;
+    return DATABASE_ERROR;
   }
 
   char *err_msg = 0;
@@ -40,9 +40,9 @@ int DbCreateTable() {
     fprintf(stderr, "SQL error: %s\n", err_msg);
     fprintf(stderr, "SQL error: %d\n", req);
     sqlite3_free(err_msg);
-    return -1;
+    return DATABASE_ERROR;
   }
-  return req;
+  return CREATE_TABLE_SUCCESS;
 }
 
 int DbCeckTableExistance(sqlite3* db) {

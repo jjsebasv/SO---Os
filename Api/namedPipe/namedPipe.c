@@ -9,11 +9,13 @@
 #include <signal.h>
 #include "../../Database/databaseapi.h"
 
-static const char * serverMsg[5] = {
+static const char * serverMsg[7] = {
   "Estudiante agregado con exito",
   "El estudiante ya existe",
   "Estudiante modificado con exito",
   "Estudiante eliminado con exito",
+  "",
+  "Tabla creada con exito",
   "Error en la base de datos"
 };
 
@@ -49,7 +51,7 @@ requestState writeRequest(Request * request, int fd) {
   // printf("ESCRIBI LA REQUEST\n");
   // printf("REQUEST -> action: %d\n", request -> action);
   // printf("REQUEST -> FD: %d\n", request -> connection -> fd);
-  printf("REQUEST -> dataSize: %d\n", request -> connection -> dataSize);
+  // printf("REQUEST -> dataSize: %d\n", request -> connection -> dataSize);
   writeNamedPipe(fd, &request -> action, sizeof(int));
   writeNamedPipe(fd, &request -> connection -> fd, sizeof(int));
   writeNamedPipe(fd, &request -> connection -> dataSize, sizeof(int));
@@ -114,7 +116,6 @@ int getResponse(Connection * connection) {
 
   int r = 0,cant;
   int nread = 0;
-  int size = BLOCK;
   char * readBuffer;
  
   r=read(fd[0], &cant, sizeof(int));

@@ -4,7 +4,7 @@
 
 void apiAddStudent (char * name, char * average);
 void apiDeleteStudent (char * name);
-void apiUpdateStudent (char * currentName, char * newName, double average);
+void apiUpdateStudent (char * currentName, char * newName, char * average);
 void apiDropTable();
 void apiReadStudents();
 void apiCreateTable();
