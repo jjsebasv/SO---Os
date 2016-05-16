@@ -98,7 +98,7 @@ int getResponse(Connection * connection) {
   char * tmp;
  
   while ( (r = read(fd, readBuffer + nread, BLOCK))  ) {
-    printf("R DEL READ %d\n", r);
+    //printf("R DEL READ %d\n", r);
     if (r > 0) {
       nread += r;
     }

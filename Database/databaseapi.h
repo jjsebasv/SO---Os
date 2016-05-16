@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlite3.h>
+#include "../Api/commons.h"
 
 #define DATABASE_NAME "database.db"
 #define NO_TABLE 404
@@ -41,5 +42,6 @@ int printRow (void *NotUsed, int argc, char **argv, char **azColName);
 int DbDropTable ();
 int DbDropDatabase (char databaseName[25]);
 int DbUpdateStudent (char currentName[25], char newName[25], char average[5]);
+void processRequestDatabase (Request * request);
 
 #endif

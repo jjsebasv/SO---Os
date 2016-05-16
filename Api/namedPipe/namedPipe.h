@@ -24,8 +24,6 @@ Request * createRequest(int action, int fd, int dataSize, void * data);
 
 Connection * createConnection(int fd);
 
-void processRequestDatabase (Request * request);
-
 void processRequestServer (Request * request);
 
 int * openNamedPipe(char * something);

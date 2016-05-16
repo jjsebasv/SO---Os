@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "../Api/commons.h"
+#include "../Database/databaseapi.h"
 
 void processRequestServer (Request * request) {
   int pid = fork();
@@ -31,13 +32,16 @@ int main (int argc, char const *argv[]){
 		return ERROR_OPEN_REQUEST_QUEUE;
 	}
 	printf("el fd es %d\n", c -> fd);
+
 	while(1) {
+		printf("while 1\n");
 		listened = listenConnection(c);
 		printf("listened: %d\n", listened);
 		if( listened >=  0){
 			r = getRequest(c, listened);
 			if( r != NOT_FOUND ){
-				// TODO processRequest(r);
+				printf("vamo a procesar\n");
+				processRequestServer(r);
 			}
 		} else{
 			printf("Error\n");
