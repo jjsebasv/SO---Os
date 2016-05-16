@@ -30,7 +30,7 @@ int main (int argc, char const *argv[]){
 		listened = listenConnection(c);
 		printf("listened: %d\n", listened);
 		if( listened >=  0){
-			r = getRequest(c);
+			r = getRequest(c, listened);
 			if( r != NOT_FOUND ){
 				printf("Request procesada\n");
 				processRequestServer(r);

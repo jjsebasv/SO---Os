@@ -120,7 +120,8 @@ int closeNamedPipe(int fd, char * name) {
   return 0;
 }
 
-Request * getRequest(Connection * connection) {
+Request * getRequest(Connection * connection, int listened) {
+  printf("START - getRequest\n");
   Request *request; 
   int action, fd = 0;
   int dataSize;
@@ -128,16 +129,9 @@ Request * getRequest(Connection * connection) {
   read(connection-> fd, &action, sizeof(int));
   read(connection-> fd, &fd, sizeof(int));
   read(connection-> fd, &dataSize, sizeof(int));
-<<<<<<< HEAD
   student = malloc (dataSize);
   read(connection-> fd, student, dataSize);
   request = createRequest(action, fd, dataSize, (void*)student);
-=======
-  data = malloc (dataSize);
-  read(connection-> fd, data, dataSize);
-  request = createRequest(action, fd, dataSize, data);
-  printf("END - readNamedPipe\n");
->>>>>>> fix
   return request;
 }
 

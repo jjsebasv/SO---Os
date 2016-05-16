@@ -50,7 +50,7 @@ int closeSocket(int fd) {
 	return shutdown(fd, SHUT_WR);
 }
 
-Request * getRequest(Connection * connection) {
+Request * getRequest(Connection * connection, int listened) {
   Request *request; 
   int action, fd;
   size_t dataSize;
@@ -60,7 +60,7 @@ Request * getRequest(Connection * connection) {
   recv(connection-> fd, &dataSize, sizeof(int),0);
   data = malloc (dataSize);
   recv(connection-> fd, data, dataSize,0);
-  request = createRequest(action, fd, dataSize, data);
+  request = createRequest(action, listened, dataSize, data);
   printf("END - readNamedPipe\n");
   return request;
 }
@@ -93,7 +93,12 @@ int requestServer(Connection * connection, int action, size_t dataSize, void * d
 }
 
 int listenConnection(Connection * connection){
+struct sockaddr_un clientName;
+socklen_t clientNameLen;
+int clientSocketfd;
 listen (connection -> fd, MAX_CONNECTIONS);
+clientSocketfd = accept(connection -> fd, (struct sockaddr*)&clientName, &clientNameLen);
+return clientSocketfd;
 }
 
 Connection * createConnection(int fd){
@@ -119,14 +124,19 @@ Request * createRequest(int action, int fd, size_t dataSize, void * data){
 
 
 int getResponse(Connection * connection) {
-  // printf("START - getResponse\n");
-  // int aux_err = 0;
-  // int fd = connection-> fd;
-  // aux_err = readNamedPipe(fd, connection-> data);
-  // closeNamedPipe(fd, REQUEST_QUEUE);
-  // if ( aux_err )
-  //   return ERROR;
-  // connection -> dataSize = aux_err;
-  // printf("END - getResponse | fd: %d\n", fd);
+  printf("START - getResponse\n");
+  int aux_err = 0;
+  int fd = connection-> fd, size;
+  aux_err = recv(fd, &size, sizeof(int),0);
+  if ( aux_err ){
+  	closeSocket(fd);
+  	return ERROR;
+  }
+  connection -> dataSize = size;
+  connection -> data = malloc(size);
+  aux_err = recv(fd, &connection-> data, size,0);
+  if ( aux_err )
+    return ERROR;
+  printf("END - getResponse | fd: %d\n", fd);
   return NOT_FOUND_ERR; // return NULL
 }

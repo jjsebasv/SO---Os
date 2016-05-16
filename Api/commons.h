@@ -45,7 +45,7 @@ typedef struct Request {
 requestState writeRequest(Request * request, int fd);
 
 // Get the first request in the request queue
-Request * getRequest(Connection * connection);
+Request * getRequest(Connection * connection, int listened);
 
 void processRequestServer(Request * request);
 requestState readRequest(Request request);
