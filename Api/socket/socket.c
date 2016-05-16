@@ -20,7 +20,6 @@ static const char * serverMsg[5] = {
   "Estudiante modificado con exito ",
   "Estudiante eliminado con exito ",
   "Error en la base de datos "
-
 };
 
 Connection * openConnection(){

@@ -18,6 +18,7 @@
 
 #define BLOCK 1024 
 
+
 //the client should use this function to start a request
 //request is initialized and sent to the server
 Request * createRequest(int action, int fd, int dataSize, void * data);

@@ -121,6 +121,7 @@ int main() {
 		printf(ENTER_COMMAND);
 		scanf("%d", &command);
 		getCommand(command);
+		while(getchar()!='\n');
 	}
 
 	return 0;
