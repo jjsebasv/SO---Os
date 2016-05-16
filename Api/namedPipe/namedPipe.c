@@ -146,8 +146,6 @@ int requestServer(Connection * connection, int action, int dataSize, void * data
   return responseFd[0];
 }
 
-
-
 Request * createRequest(int action, int fd, int dataSize, void * data){
   Connection * connection = createConnection(fd);
   connection -> dataSize = dataSize;

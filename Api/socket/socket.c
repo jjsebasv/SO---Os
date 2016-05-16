@@ -13,14 +13,14 @@
 #define LISTEN_BACKLOG 50
 #define	MAX_CONNECTIONS 100
 
-
-static const char * serverMsg[5] = {
-  "Estudiante agregado con exito ",
-  "El estudiante ya existe ",
-  "Estudiante modificado con exito ",
-  "Estudiante eliminado con exito ",
-  "Error en la base de datos "
-
+static const char * serverMsg[7] = {
+  "Estudiante agregado con exito!",
+  "El estudiante ya existe!",
+  "Estudiante modificado con exito!",
+  "Estudiante eliminado con exito!",
+  "Tabla creada con exito!",
+  "Tabla eliminada con exito!",
+  "Error en la base de datos!"
 };
 
 Connection * openConnection(){
