@@ -29,7 +29,8 @@ void processRequestDatabase (Request * request) {
       break;
 
     case DROP_TABLE:
-      DbDropTable();
+      state = DbDropTable();
+      writeResponse(request, state);
       break;
 
     case CREATE_TABLE:
