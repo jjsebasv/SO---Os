@@ -42,4 +42,3 @@ void processRequestDatabase (Request * request) {
       printf("Error request action\n");
   }
 }
-
