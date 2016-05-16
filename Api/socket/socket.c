@@ -73,7 +73,6 @@ Request * getRequest(Connection * connection, int listened) {
   cant = read(listened, data, dataSize);
   printf("cantidad de caracteres leidos: %d\n",cant);
   request = createRequest(action, listened, dataSize, data);
-  printf("END - readNamedPipe\n");
   return request;
 }
 
