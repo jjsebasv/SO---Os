@@ -58,6 +58,7 @@ void monitorConnection(Connection * connection, fd_set* set);
 
 int requestServer(Connection * connection, int action, int dataSize, void * data);
 int getResponse(Connection * connection);
+int listenConnection(Connection * connection);
 
 
 #endif

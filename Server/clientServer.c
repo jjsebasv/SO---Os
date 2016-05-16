@@ -27,7 +27,7 @@ int main (int argc, char const *argv[]){
   tv.tv_usec = 0;
 
 	while(1) {
-		listened = listenConnectin(c);
+		listened = listenConnection(c);
 		printf("listened: %d\n", listened);
 		if( listened >=  0){
 			r = getRequest(c);
@@ -35,8 +35,9 @@ int main (int argc, char const *argv[]){
 				printf("Request procesada\n");
 				processRequestServer(r);
 			}
-		} else( listened < 0 ){
+		} else{
 			printf("Error\n");
+		}
 	}
 	return 0;
 }
