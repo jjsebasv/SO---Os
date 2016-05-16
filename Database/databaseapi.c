@@ -202,7 +202,7 @@ int DbDropTable () {
   }
 
   sqlite3_close(db);
-  return 0;
+  return DROP_TABLE_SUCCESS;
 }
 
 
