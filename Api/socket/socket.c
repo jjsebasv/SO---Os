@@ -37,7 +37,10 @@ Connection * openConnection(){
 
 requestState writeRequest(Request * request, int fd){
   printf("START - writeRequest\n");
-  printf("FD %d\n", fd);
+
+  printf("WRITE REQUEST SOCKET: %d\n", request->action);
+  printf("WRITE REQUEST FD: %d\n", request -> connection -> fd);
+  printf("WRITE REQUEST DATASIZE: %d\n", request -> connection -> dataSize);
   send(fd, &request -> action, sizeof(request -> action),0);
   send(fd, &request -> connection -> fd, sizeof(request -> connection -> fd),0);
   send(fd, &request -> connection -> dataSize, sizeof(request -> connection -> dataSize),0);
@@ -61,7 +64,6 @@ Request * getRequest(Connection * connection, int listened) {
   data = malloc (dataSize);
   recv(connection-> fd, data, dataSize,0);
   request = createRequest(action, listened, dataSize, data);
-  printf("END - readNamedPipe\n");
   return request;
 }
 

@@ -19,6 +19,7 @@
 
 void processRequestDatabase (Request * request) {
   int state;
+  printf("ACTION %d\n", request->action);
   switch (request->action) {
 
     case ADD_STUDENT:
